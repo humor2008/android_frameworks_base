@@ -26716,8 +26716,8 @@ package android.provider {
     field public static final deprecated java.lang.String HTTP_PROXY = "http_proxy";
     field public static final java.lang.String IMMERSIVE_RECENTS = "immersive_recents";
     field public static final deprecated java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
-    field public static final java.lang.String LISTVIEW_ANIMATION = "listview_animation";
-    field public static final java.lang.String LISTVIEW_INTERPOLATOR = "listview_interpolator";
+
+
     field public static final deprecated java.lang.String LOCATION_PROVIDERS_ALLOWED = "location_providers_allowed";
     field public static final deprecated java.lang.String LOCK_PATTERN_ENABLED = "lock_pattern_autolock";
     field public static final deprecated java.lang.String LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED = "lock_pattern_tactile_feedback_enabled";
@@ -26749,9 +26749,8 @@ package android.provider {
     field public static final deprecated java.lang.String SHOW_PROCESSES = "show_processes";
     field public static final deprecated java.lang.String SHOW_WEB_SUGGESTIONS = "show_web_suggestions";
     field public static final java.lang.String SOUND_EFFECTS_ENABLED = "sound_effects_enabled";
-    field public static final java.lang.String STATUS_BAR_CARRIER_FONT_SIZE = "status_bar_carrier_font_size";
-    field public static final java.lang.String STATUS_BAR_NETWORK_TRAFFIC_STYLE = "status_bar_network_traffic_style";
-    field public static final java.lang.String STATUS_BAR_SHOW_WEATHER = "status_bar_show_weather";
+
+
     field public static final deprecated java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
     field public static final java.lang.String TEXT_AUTO_CAPS = "auto_caps";
@@ -32659,7 +32658,7 @@ package android.text.format {
     method public static java.lang.String formatElapsedTime(long);
     method public static java.lang.String formatElapsedTime(java.lang.StringBuilder, long);
     method public static final java.lang.CharSequence formatSameDayTime(long, long, int, int);
-    method public static java.lang.String getAMPMCNString(int, int);
+
     method public static deprecated java.lang.String getAMPMString(int);
     method public static deprecated java.lang.String getDayOfWeekString(int, int);
     method public static deprecated java.lang.String getMonthString(int, int);
@@ -39496,7 +39495,7 @@ package android.widget {
     method public void setFastScrollStyle(int);
     method public void setFilterText(java.lang.String);
     method public void setFriction(float);
-    method public void setGridView(boolean);
+
     method public void setItemChecked(int, boolean);
     method public void setMultiChoiceModeListener(android.widget.AbsListView.MultiChoiceModeListener);
     method public void setOnScrollListener(android.widget.AbsListView.OnScrollListener);

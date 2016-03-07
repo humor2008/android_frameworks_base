@@ -28775,6 +28775,8 @@ package android.provider {
     field public static final deprecated java.lang.String HTTP_PROXY = "http_proxy";
     field public static final java.lang.String IMMERSIVE_RECENTS = "immersive_recents";
     field public static final deprecated java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
+    field public static final java.lang.String LISTVIEW_ANIMATION = "listview_animation";
+    field public static final java.lang.String LISTVIEW_INTERPOLATOR = "listview_interpolator";
     field public static final deprecated java.lang.String LOCATION_PROVIDERS_ALLOWED = "location_providers_allowed";
     field public static final deprecated java.lang.String LOCK_PATTERN_ENABLED = "lock_pattern_autolock";
     field public static final deprecated java.lang.String LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED = "lock_pattern_tactile_feedback_enabled";
@@ -28806,6 +28808,9 @@ package android.provider {
     field public static final deprecated java.lang.String SHOW_PROCESSES = "show_processes";
     field public static final deprecated java.lang.String SHOW_WEB_SUGGESTIONS = "show_web_suggestions";
     field public static final java.lang.String SOUND_EFFECTS_ENABLED = "sound_effects_enabled";
+    field public static final java.lang.String STATUS_BAR_CARRIER_FONT_SIZE = "status_bar_carrier_font_size";
+    field public static final java.lang.String STATUS_BAR_NETWORK_TRAFFIC_STYLE = "status_bar_network_traffic_style";
+    field public static final java.lang.String STATUS_BAR_SHOW_WEATHER = "status_bar_show_weather";
     field public static final deprecated java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
     field public static final java.lang.String TEXT_AUTO_CAPS = "auto_caps";
@@ -31444,6 +31449,82 @@ package android.speech.tts {
     field public static final int QUALITY_NORMAL = 300; // 0x12c
     field public static final int QUALITY_VERY_HIGH = 500; // 0x1f4
     field public static final int QUALITY_VERY_LOW = 100; // 0x64
+  }
+
+}
+
+package android.suda.lunar {
+
+  public class Constant {
+    ctor public Constant();
+    method public static java.lang.String[] getAnimals();
+    method public static java.lang.String getLeap();
+    method public static java.lang.String[] getLunarFestival();
+    method public static java.lang.String[] getSolarHoliday();
+    field public static final java.lang.String[] ANIMALS_CN;
+    field public static final java.lang.String[] ANIMALS_HK_TW;
+    field public static final java.lang.String[] CHINESE_NUMBER_CN;
+    field public static final java.lang.String[] CHINESE_TEN_CN;
+    field public static final java.lang.String[] GAN_CN;
+    field public static final java.lang.String[] HOLIDAY_CN;
+    field public static final java.lang.String[] HOLIDAY_HK;
+    field public static final java.lang.String[] HOLIDAY_TW;
+    field public static final java.lang.String[] LUNAR_FESTIVAL_CN;
+    field public static final java.lang.String[] LUNAR_FESTIVAL_HK_TW;
+    field public static final java.lang.String[] LUNAR_MONTH_NAME_CN;
+    field public static final java.lang.String[] SOLAR_TERM_CN;
+    field public static final java.lang.String STATUS_CHUSHI_CN = "\u521d\u5341";
+    field public static final java.lang.String STATUS_DAY_CN = "\u65e5";
+    field public static final java.lang.String STATUS_ERSHI_CN = "\u4e8c\u5341";
+    field public static final java.lang.String STATUS_FORMAT_1_CN = "yyyy\u5e74MM\u6708dd\u65e5";
+    field public static final java.lang.String STATUS_FORMAT_2_CN = "1900\u5e741\u670831\u65e5";
+    field public static final java.lang.String STATUS_LEAP_CN = "\u95f0";
+    field public static final java.lang.String STATUS_LEAP_HK_TW = "\u958f";
+    field public static final java.lang.String STATUS_MONTH_CN = "\u6708";
+    field public static final java.lang.String STATUS_SANSHI_CN = "\u4e09\u5341";
+    field public static final java.lang.String STATUS_YEAR_CN = "\u5e74";
+    field public static final java.lang.String[] ZHI_CN;
+  }
+
+  public class Lunar {
+    ctor public Lunar(java.util.Calendar);
+    method public java.lang.String animalsYear();
+    method public java.lang.String cyclical();
+    method public java.lang.String getChinaDayString(int);
+    method public boolean isBigMonth(java.lang.String);
+  }
+
+  public class LunarFestival {
+    ctor public LunarFestival();
+    method public static java.lang.String getLunarFestival(java.lang.String, android.suda.lunar.Lunar);
+  }
+
+  public class SolarHoliDay {
+    ctor public SolarHoliDay();
+    method public static java.lang.String getSolarHoliDay(int, int);
+  }
+
+  public class SolarTerm {
+    ctor public SolarTerm();
+    method public static java.lang.String getSolarTermStr(int, int, int);
+  }
+
+}
+
+package android.suda.utils {
+
+  public class Converter {
+    ctor public Converter();
+    method public static int dpToPx(android.content.Context, int);
+    method public static int pxToDp(android.content.Context, int);
+  }
+
+  public class ImageHelper {
+    ctor public ImageHelper();
+    method public static android.graphics.Bitmap getCircleBitmap(android.graphics.Bitmap);
+    method public static android.graphics.Bitmap getColoredBitmap(android.graphics.drawable.Drawable, int);
+    method public static android.graphics.Bitmap getRoundedCornerBitmap(android.graphics.Bitmap);
+    method public static android.graphics.drawable.Drawable resize(android.content.Context, android.graphics.drawable.Drawable, int);
   }
 
 }
@@ -34870,6 +34951,7 @@ package android.text.format {
     method public static java.lang.String formatElapsedTime(long);
     method public static java.lang.String formatElapsedTime(java.lang.StringBuilder, long);
     method public static final java.lang.CharSequence formatSameDayTime(long, long, int, int);
+    method public static java.lang.String getAMPMCNString(int, int);
     method public static deprecated java.lang.String getAMPMString(int);
     method public static deprecated java.lang.String getDayOfWeekString(int, int);
     method public static deprecated java.lang.String getMonthString(int, int);
@@ -42020,6 +42102,7 @@ package android.widget {
     method public void setFastScrollStyle(int);
     method public void setFilterText(java.lang.String);
     method public void setFriction(float);
+    method public void setGridView(boolean);
     method public void setItemChecked(int, boolean);
     method public void setMultiChoiceModeListener(android.widget.AbsListView.MultiChoiceModeListener);
     method public void setOnScrollListener(android.widget.AbsListView.OnScrollListener);

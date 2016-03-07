@@ -1275,6 +1275,8 @@ android.media.projection.MediaProjectionManager
 android.media.session.MediaSessionManager
 android.media.tv.TvInputManager
 android.mtp.MtpDatabase
+android.suda.location.PhoneLocation
+android.suda.utils.SudaUtils
 android.mtp.MtpDevice
 android.mtp.MtpDeviceInfo
 android.mtp.MtpObjectInfo

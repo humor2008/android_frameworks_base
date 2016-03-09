@@ -55,6 +55,7 @@ public abstract class WindowOrientationListener {
     private boolean mEnabled;
     private int mRate;
     private String mSensorType;
+    private boolean mUseSystemClockforRotationSensor;
     private Sensor mSensor;
     private OrientationJudge mOrientationJudge;
     private int mCurrentRotation = -1;
@@ -90,6 +91,9 @@ public abstract class WindowOrientationListener {
 
         mSensorType = context.getResources().getString(
                 com.android.internal.R.string.config_orientationSensorType);
+        mUseSystemClockforRotationSensor = context.getResources().getBoolean(
+                com.android.internal.R.bool.config_useSystemClockforRotationSensor);
+
         if (!TextUtils.isEmpty(mSensorType)) {
             List<Sensor> sensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
             final int N = sensors.size();
@@ -353,22 +357,22 @@ public abstract class WindowOrientationListener {
         // the low-pass filter already suppresses most of the noise so we're really just
         // looking for quick confirmation that the last few samples are in agreement as to
         // the desired orientation.
-        private static final long PROPOSAL_SETTLE_TIME_NANOS = 25 * NANOS_PER_MS;
+        private static final long PROPOSAL_SETTLE_TIME_NANOS = 40 * NANOS_PER_MS;
 
         // The minimum amount of time that must have elapsed since the device last exited
         // the flat state (time since it was picked up) before the proposed rotation
         // can change.
-        private static final long PROPOSAL_MIN_TIME_SINCE_FLAT_ENDED_NANOS = 250 * NANOS_PER_MS;
+        private static final long PROPOSAL_MIN_TIME_SINCE_FLAT_ENDED_NANOS = 500 * NANOS_PER_MS;
 
         // The minimum amount of time that must have elapsed since the device stopped
         // swinging (time since device appeared to be in the process of being put down
         // or put away into a pocket) before the proposed rotation can change.
-        private static final long PROPOSAL_MIN_TIME_SINCE_SWING_ENDED_NANOS = 150 * NANOS_PER_MS;
+        private static final long PROPOSAL_MIN_TIME_SINCE_SWING_ENDED_NANOS = 300 * NANOS_PER_MS;
 
         // The minimum amount of time that must have elapsed since the device stopped
         // undergoing external acceleration before the proposed rotation can change.
         private static final long PROPOSAL_MIN_TIME_SINCE_ACCELERATION_ENDED_NANOS =
-                250 * NANOS_PER_MS;
+                500 * NANOS_PER_MS;
 
         // If the tilt angle remains greater than the specified angle for a minimum of
         // the specified time, then the device is deemed to be lying flat
@@ -598,7 +602,8 @@ public abstract class WindowOrientationListener {
                 // Reset the orientation listener state if the samples are too far apart in time
                 // or when we see values of (0, 0, 0) which indicates that we polled the
                 // accelerometer too soon after turning it on and we don't have any data yet.
-                final long now = event.timestamp;
+                final long now = mUseSystemClockforRotationSensor
+                        ? SystemClock.elapsedRealtimeNanos() : event.timestamp;
                 final long then = mLastFilteredTimestampNanos;
                 final float timeDeltaMS = (now - then) * 0.000001f;
                 final boolean skipSample;

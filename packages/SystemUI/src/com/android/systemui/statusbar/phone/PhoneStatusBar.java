@@ -5275,14 +5275,8 @@ private final View.OnClickListener mKillClickListener = new View.OnClickListener
         int nNotifs = mNotificationData.size();
         ArrayList<Pair<String, StatusBarNotification>> notifications = new ArrayList<>(nNotifs);
         copyNotifications(notifications, mNotificationData);
-        // now remove all the notification views since we'll be re-inflating these with the copied
-        // data
-        for (int i = 0; i < nNotifs; i++) {
-            final NotificationData.Entry entry = mNotificationData.get(i);
-            if (entry != null) {
-                removeNotificationViews(entry.key, rankingMap);
-            }
-        }
+        // now remove all the notifications since we'll be re-creating these with the copied data
+        mNotificationData.clear();
 
         if (mCustomTileListenerService != null) {
             try {
@@ -6087,8 +6081,8 @@ private final View.OnClickListener mKillClickListener = new View.OnClickListener
     public void updateStackScrollerState(boolean goingToFullShade) {
         if (mStackScroller == null) return;
         boolean onKeyguard = mState == StatusBarState.KEYGUARD;
-        mStackScroller.setHideSensitive(onKeyguard
-                && !userAllowsPrivateNotificationsInPublic(mCurrentUserId), goingToFullShade);
+        mStackScroller.setHideSensitive(isLockscreenPublicMode()
+                || !userAllowsPrivateNotificationsInPublic(mCurrentUserId), goingToFullShade);
         mStackScroller.setDimmed(onKeyguard, false /* animate */);
         mStackScroller.setExpandingEnabled(!onKeyguard);
         ActivatableNotificationView activatedChild = mStackScroller.getActivatedChild();
@@ -6380,13 +6374,14 @@ private final View.OnClickListener mKillClickListener = new View.OnClickListener
         mStartedGoingToSleep = false;
         mDeviceInteractive = false;
         mWakeUpComingFromTouch = false;
-        mShowTaskList = false;
-        mNotificationPanel.setTouchDisabled(true);
         mWakeUpTouchLocation = null;
         mStackScroller.setAnimationsEnabled(false);
         mStatusBarWindowManager.setHeadsUpShowing(false);
         updateVisibleToUser();
         mVisualizerView.setVisible(false);
+        if (mQSTileHost.isEditing()) {
+            mQSTileHost.setEditing(false);
+        }
         if (mLaunchCameraOnFinishedGoingToSleep) {
             mLaunchCameraOnFinishedGoingToSleep = false;
 

@@ -599,8 +599,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     boolean mDevForceNavbar = false;
 
-    // Pie
-    boolean mPieState = false;
 
     // User defined bar visibility, regardless of factory configuration
     boolean mNavbarVisible = false;
@@ -980,9 +978,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this,
                     UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.PA_PIE_STATE), false, this,
-                    UserHandle.USER_ALL);
 	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.THREE_FINGER_GESTURE), false, this,
                     UserHandle.USER_ALL);
@@ -1070,7 +1065,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private ImmersiveModeConfirmation mImmersiveModeConfirmation;
 
     private SystemGesturesPointerEventListener mSystemGestures;
+
     private OPGesturesListener mOPGestures;
+
 
     IStatusBarService getStatusBarService() {
         synchronized (mServiceAquireLock) {
@@ -1732,6 +1729,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     }
                 });
 
+        mPowerManagerInternal = LocalServices.getService(PowerManagerInternal.class);
 
         // Init display burn-in protection
         boolean burnInProtectionEnabled = context.getResources().getBoolean(
@@ -2277,10 +2275,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     CMSettings.System.VOLBTN_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) == 1);
 	     mVolumeAnswer = (Settings.System.getIntForUser(resolver,
                     Settings.System.ANSWER_VOLUME_BUTTON_BEHAVIOR_ANSWER, 0, UserHandle.USER_CURRENT) == 1);
-
-            // pa pie
-            mPieState = (Settings.System.getIntForUser(resolver,
-                    Settings.System.PA_PIE_STATE, 0, UserHandle.USER_CURRENT) == 1);
 
             // Configure wake gesture.
             boolean wakeGestureEnabledSetting = Settings.Secure.getIntForUser(resolver,
@@ -5211,10 +5205,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
-    private boolean immersiveModeImplementsPie() {
-        return mPieState;
-    }
-
     private void offsetInputMethodWindowLw(WindowState win) {
         int top = Math.max(win.getDisplayFrameLw().top, win.getContentFrameLw().top);
         top += win.getGivenContentInsetsLw().top;
@@ -6224,6 +6214,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 break;
             }
 
+            case KeyEvent.KEYCODE_SOFT_SLEEP: {
+                result &= ~ACTION_PASS_TO_USER;
+                isWakeKey = false;
+                if (!down) {
+                    mPowerManagerInternal.setUserInactiveOverrideFromWindowManager();
+                }
+                break;
+            }
+
             case KeyEvent.KEYCODE_WAKEUP: {
                 result &= ~ACTION_PASS_TO_USER;
                 isWakeKey = true;
@@ -6436,11 +6435,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private boolean shouldDispatchInputWhenNonInteractive() {
-        if (mDisplay == null || mDisplay.getState() == Display.STATE_OFF) {
-            return false;
-        }
-        // Send events to keyguard while the screen is on and it's showing.
-        if (isKeyguardShowingAndNotOccluded()) {
+        // Send events to keyguard while the screen is on.
+        if (isKeyguardShowingAndNotOccluded() && mDisplay != null
+                && mDisplay.getState() != Display.STATE_OFF) {
             return true;
         }
 
@@ -6655,14 +6652,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     return;
                 }
                 if (sb) mStatusBarController.showTransient();
-                if (nb && !immersiveModeImplementsPie())
-                    mNavigationBarController.showTransient();
+                if (nb) mNavigationBarController.showTransient();
                 mImmersiveModeConfirmation.confirmCurrentPrompt();
                 updateSystemUiVisibilityLw();
             }
         }
     }
-
 
 
     BroadcastReceiver mWifiDisplayReceiver = new BroadcastReceiver() {
@@ -6681,19 +6676,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
     };
-
-    private void toggleOrientationListener(boolean enable) {
-        IStatusBarService statusbar = getStatusBarService();
-        if (statusbar != null) {
-           try {
-               statusbar.toggleOrientationListener(enable);
-           } catch (RemoteException e) {
-               Slog.e(TAG, "RemoteException when controlling orientation sensor", e);
-               // re-acquire status bar service next time it is needed.
-               mStatusBarService = null;
-           }
-        }
-    }
 
     // Called on the PowerManager's Notifier thread.
     @Override
@@ -6913,8 +6895,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             } catch (RemoteException unhandled) {
             }
         }
-
-        toggleOrientationListener(true);
     }
 
     private void handleHideBootMessage() {

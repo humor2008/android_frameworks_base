@@ -158,5 +158,4 @@
     <!-- Uicc hotswapped event configuration needed notification -->
     <java-symbol type="string" name="uicc_hot_swapped_event_title" />
     <java-symbol type="string" name="uicc_hot_swapped_event_text" />
-
 </resources>

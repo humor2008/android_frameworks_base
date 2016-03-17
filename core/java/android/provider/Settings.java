@@ -4044,63 +4044,12 @@ public final class Settings {
          */
         public static final String HIDE_PANEL_ALARM = "hide_panel_alarm";
 
-	/*
-         *  Hide Settings Battery Charging text in Panel
-         * @hide
-         */
-        public static final String HIDE_PANEL_BATTERY = "hide_panel_battery";
-
-
-	/**
-         * Hide panel icons
-         * @hide
-         */
-        public static final String HIDE_PANEL_ICONS = "hide_panel_icons";
-
-
-	/**
-         * Hide Settings icon in Panel
-         * @hide
-         */
-        public static final String HIDE_SETTINGS_ICON = "hide_settings_icon";
-
-
-	/**
-         * Hide user icon in Panel
-         * @hide
-         */
-        public static final String HIDE_USER_ICON = "hide_user_icon";
-
 	/**
          * Header Clock Font Style
          * @hide
          */
         public static final String HEADER_CLOCK_FONT_STYLE = "header_clock_font_style";
 
-
-	/**
-         * Hide Weather Font Style
-         * @hide
-         */
-        public static final String HEADER_WEATHER_FONT_STYLE = "header_weather_font_style";
-
-	/**
-         * Hide AM/PM Font Style
-         * @hide
-         */
-        public static final String HEADER_DETAIL_FONT_STYLE = "header_detail_font_style";
-
-	/**
-         * Hide Date Font Style
-         * @hide
-         */
-        public static final String HEADER_DATE_FONT_STYLE = "header_date_font_style";
-
-	/**
-         * Hide Alarm Font Style
-         * @hide
-         */
-        public static final String HEADER_ALARM_FONT_STYLE = "header_alarm_font_style";
 
 	/**
          * Header Clock Color

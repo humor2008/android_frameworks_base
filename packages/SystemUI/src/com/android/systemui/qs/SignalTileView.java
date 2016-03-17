@@ -46,7 +46,6 @@ public final class SignalTileView extends QSTileView {
     private ImageView mIn;
     private ImageView mOut;
     private boolean mQSColorSwitch = false;
-    private SettingsObserver mSettingsObserver;	
 
     private int mWideOverlayIconStartPadding;
 
@@ -58,7 +57,6 @@ public final class SignalTileView extends QSTileView {
 
         mWideOverlayIconStartPadding = context.getResources().getDimensionPixelSize(
                 R.dimen.wide_type_icon_start_padding_qs);
-	mSettingsObserver = new SettingsObserver(mHandler);
     }
 
     private ImageView addTrafficView(int icon) {
@@ -177,44 +175,5 @@ public final class SignalTileView extends QSTileView {
             mOut.setColorFilter(mIconColor, Mode.MULTIPLY);
        		 }
 	}
-
-	class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH),
-                    false, this, UserHandle.USER_ALL);
-            update();
-        }
-
-        void unobserve() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.unregisterContentObserver(this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            update();
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-	   ContentResolver resolver = mContext.getContentResolver();
-	   if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH))) {
-               setIconColor();
-		} 
-	        update();
-        }
-
-        public void update() {
-            ContentResolver resolver = mContext.getContentResolver();
-                setIconColor();
-        }
-    }
 
 }

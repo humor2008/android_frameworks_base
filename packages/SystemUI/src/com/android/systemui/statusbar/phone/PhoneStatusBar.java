@@ -2303,9 +2303,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Decrease the delay for every row we animate to give the sense of
         // accelerating the swipes
-        int rowDelayDecrement = 10;
-        int currentDelay = 140;
-        int totalDelay = 180;
+        int rowDelayDecrement = 9;
+        int currentDelay = 120;
+        int totalDelay = 160;
         int numItems = hideAnimatedList.size();
         for (int i = numItems - 1; i >= 0; i--) {
             View view = hideAnimatedList.get(i);
@@ -2313,8 +2313,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (i == 0) {
                 endRunnable = animationFinishAction;
             }
-            mStackScroller.dismissViewAnimated(view, endRunnable, totalDelay, 260);
-            currentDelay = Math.max(50, currentDelay - rowDelayDecrement);
+            mStackScroller.dismissViewAnimated(view, endRunnable, totalDelay, 240);
+            currentDelay = Math.max(45, currentDelay - rowDelayDecrement);
             totalDelay += currentDelay;
         }
     }
@@ -4036,13 +4036,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // send updated sysui visibility to window manager
             notifyUiVisibilityChanged(mSystemUiVisibility);
         }
-    }
-
-    @Override  // CommandQueue
-    public void setAutoRotate(boolean enabled) {
-        Settings.System.putInt(mContext.getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION,
-                enabled ? 1 : 0);
     }
 
     private int computeBarMode(int oldVis, int newVis, BarTransitions transitions,

@@ -151,7 +151,7 @@ public class QSTileView extends ViewGroup {
                 UserHandle.USER_CURRENT) == 1;
 	    mLabelColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF);
-        if (mLabel != null) {
+        if (mLabel != null && mLabel.isAttachedToWindow()) {
             labelText = mLabel.getText();
             removeView(mLabel);
         }
@@ -173,7 +173,7 @@ public class QSTileView extends ViewGroup {
                 if (mQsColorSwitch) {
                 mDualLabel.setTextColor(mLabelColor);
            	 } else {
-                mDualLabel.setTextColor(res.getColor(R.color.qs_tile_text));
+                mDualLabel.setTextColor(mContext.getColor(R.color.qs_tile_text));
           	}
                 mDualLabel.setPadding(0, mDualTileVerticalPaddingPx, 0, mDualTileVerticalPaddingPx);
                 mDualLabel.setTypeface(CONDENSED);
@@ -518,6 +518,15 @@ public class QSTileView extends ViewGroup {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -535,6 +544,21 @@ public class QSTileView extends ViewGroup {
         public void onChange(boolean selfChange, Uri uri) {
 	   ContentResolver resolver = mContext.getContentResolver();
             update();
+	if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_COLOR_SWITCH))) {
+		 updateColors();
+		setIconColor();
+		}
+	if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_ICON_COLOR))) {
+		updateColors();
+		setIconColor();
+		}
+	if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_TEXT_COLOR))) {
+		updateColors();
+		setIconColor();
+		}
         }
 
         public void update() {

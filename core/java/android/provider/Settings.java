@@ -4611,18 +4611,6 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_NAVBAR = "double_tap_sleep_navbar";
 
         /**
-         * change lockscreen alpha color
-         * @hide
-         */
-        public static final String LOCKSCREEN_ALPHA = "lockscreen_alpha";
-
-        /**
-         * change lockscreen security alpha color
-         * @hide
-         */
-        public static final String LOCKSCREEN_SECURITY_ALPHA = "lockscreen_security_alpha";
-
-        /**
          * Enable HW keys
          * @hide
          */
@@ -4651,6 +4639,24 @@ public final class Settings {
          * @hide
          */
         public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
+
+        /**
+         * Override and forcefully disable the fullscreen keyboard
+         * @hide
+         */
+        public static final String DISABLE_FULLSCREEN_KEYBOARD = "disable_fullscreen_keyboard";
+
+        /**
+         * Automatic keyboard rotation timeout.  0 to disable completely.
+         * @hide
+         */
+        public static final String KEYBOARD_ROTATION_TIMEOUT = "keyboard_rotation_timeout";
+
+        /**
+         * Forces formal text input.  1 to replace emoticon key with enter key.
+         * @hide
+         */
+        public static final String FORMAL_TEXT_INPUT = "formal_text_input";
 
 	/**
 	 * Enable blocking wakelock
@@ -5303,7 +5309,7 @@ public final class Settings {
 
         /**
          * Define when Nfc polling is activated.
-	 * @hide
+         * @hide
          */
         public static final String NFC_POLLING_MODE = "nfc_polling";
 
@@ -7907,12 +7913,6 @@ public final class Settings {
          */
         public static final String CAMERA_DOUBLE_TAP_POWER_GESTURE_DISABLED =
                 "camera_double_tap_power_gesture_disabled";
-
-        /**
-         * Options to decide wether or not to show keyguard bouncer on secure lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_BOUNCER = "lockscreen_bouncer";
 
         /**
          * Boolean value whether to link ringtone and notification volume

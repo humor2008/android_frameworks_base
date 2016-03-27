@@ -63,13 +63,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
-import android.net.Uri;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -135,9 +135,9 @@ import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.cm.ActionUtils;
-import com.android.internal.util.cm.WeatherController;
-import com.android.internal.util.cm.WeatherControllerImpl;
-import com.android.internal.util.cm.WeatherController.WeatherInfo;
+import com.android.systemui.statusbar.policy.WeatherController;
+import com.android.systemui.statusbar.policy.WeatherControllerImpl;
+import com.android.systemui.statusbar.policy.WeatherController.WeatherInfo;
 import com.android.internal.util.cm.Blur;
 import com.android.internal.utils.du.ActionHandler;
 import com.android.internal.utils.du.DUActionUtils;
@@ -518,15 +518,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mInitialTouchX;
     int mInitialTouchY;
 
-
-
     // last theme that was applied in order to detect theme change (as opposed
     // to some other configuration change).
     ThemeConfig mCurrentTheme;
 
     private boolean mRecreating = false;
-    private int mBatterySaverWarningColor;
-
 
     // for disabling the status bar
     int mDisabled1 = 0;
@@ -645,9 +641,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			Settings.System.STATUS_BAR_RR_LOGO_COLOR),
 	        false, this, UserHandle.USER_ALL);	
 	resolver.registerContentObserver(Settings.System.getUriFor(
-			Settings.System.BATTERY_SAVER_MODE_COLOR),
-	        false, this, UserHandle.USER_ALL);
-	resolver.registerContentObserver(Settings.System.getUriFor(
 			Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP),
 			false, this, UserHandle.USER_ALL);
 	resolver.registerContentObserver(Settings.System.getUriFor(
@@ -757,29 +750,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	resolver.registerContentObserver(Settings.System.getUriFor(
 			Settings.System.CLEAR_RECENTS_STYLE_ENABLE),
 			false, this, UserHandle.USER_ALL);
-	resolver.registerContentObserver(Settings.System.getUriFor(
-			Settings.System.GESTURE_ANYWHERE_ENABLED),
-			false, this, UserHandle.USER_ALL);
-	resolver.registerContentObserver(Settings.System.getUriFor(
-			Settings.System.ENABLE_APP_CIRCLE_BAR),
-			false, this, UserHandle.USER_ALL);
-
 		    update();
         }
 
 	@Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(
-		Settings.System.BATTERY_SAVER_MODE_COLOR))) {
-		mBatterySaverWarningColor = Settings.System.getIntForUser(
-		mContext.getContentResolver(),
-		Settings.System.BATTERY_SAVER_MODE_COLOR, 1,
-		UserHandle.USER_CURRENT);
-		if (mBatterySaverWarningColor != 0) {
-		mBatterySaverWarningColor = mContext.getResources()
-		.getColor(com.android.internal.R.color.battery_saver_mode_color);
-		}
-		} else if (uri.equals(Settings.System.getUriFor(
+	if (uri.equals(Settings.System.getUriFor(
 		Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE))
 		|| uri.equals(Settings.System.getUriFor(
 		Settings.System.STATUS_BAR_WEATHER_COLOR))
@@ -874,12 +850,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.CLEAR_RECENTS_STYLE_ENABLE))) 
                     {
                	DontStressOnRecreate();
-	  }  else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.GESTURE_ANYWHERE_ENABLED))) {
-              DontStressOnRecreate();
-	} else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.ENABLE_APP_CIRCLE_BAR))) {
-           DontStressOnRecreate();
 	}
          update();
         }
@@ -1019,12 +989,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		}
 
 		showmCustomlogo(mCustomlogo, mCustomlogoColor,  mCustomlogoStyle);
-
-
-
-       
-           boolean mGestureAnywhere = Settings.System.getIntForUser(resolver,
-                    Settings.System.GESTURE_ANYWHERE_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
 
 
 	   int  mQSBackgroundColor = Settings.System.getInt(
@@ -1612,28 +1576,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } catch (RemoteException ex) {
             // no window manager? good luck with that
         }
-         boolean mAppcircle = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.ENABLE_APP_CIRCLE_BAR, 0) == 1;
-              if(mAppcircle) {      
-        addAppCircleSidebar();
-        } else {
-        if (mAppCircleSidebar !=null) {
-        try { 
-       removeAppCircleSidebar();
-       } catch (Exception e) { }
-	}
-       }
-        boolean mGestureAnywhere = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.GESTURE_ANYWHERE_ENABLED, 0) == 1;
-	if(mGestureAnywhere) {
-	addGestureAnywhereView();
-	} else { 
-	if (mGestureAnywhereView !=null) {
-	try { 
-	removeGestureAnywhereView();
-	   } catch (Exception e) { }
-	  }
-	}
+        
+	if (!mRecreating) {
+            addGestureAnywhereView();
+            addAppCircleSidebar();
+        }
 
 
         if (mAssistManager == null) {
@@ -1711,15 +1658,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 R.id.keyguard_indication_text),
                 mKeyguardBottomArea.getLockIcon());
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
-
-        mBatterySaverWarningColor = Settings.System.getIntForUser(
-                mContext.getContentResolver(),
-                Settings.System.BATTERY_SAVER_MODE_COLOR, 1,
-                UserHandle.USER_CURRENT);
-        if (mBatterySaverWarningColor != 0) {
-            mBatterySaverWarningColor = mContext.getResources()
-                   .getColor(com.android.internal.R.color.battery_saver_mode_color);
-        }
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -4045,14 +3983,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 : MODE_OPAQUE;
     }
 
-    private void DontStressOnRecreate() { // Update maps and remove children,views after the recreate statusbar .Provides to rest in the recreate
-        recreateStatusBar();
-        updateRowStates();
-        updateSpeedbump();
-        checkBarModes();
-        updateClearAll();
-        updateEmptyShadeView();
-    }    
 
     private void checkBarModes() {
         if (mDemoMode) return;
@@ -4073,9 +4003,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 && windowState != WINDOW_STATE_HIDDEN && !powerSave;
         if (powerSave && getBarState() == StatusBarState.SHADE) {
             mode = MODE_WARNING;
-        }
-        if (mode == MODE_WARNING) {
-            transitions.setWarningColor(mBatterySaverWarningColor);
         }
         transitions.transitionTo(mode, anim);
     }
@@ -4981,6 +4908,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (newTheme != null) mCurrentTheme = (ThemeConfig) newTheme.clone();
         if (updateStatusBar) {
             recreateStatusBar();
+            updateNotificationShadeForChildren();
+            mTmpChildOrderMap.clear();
             if (mNavigationBarView != null) {
                 mNavigationBarView.onRecreateStatusbar();
             }
@@ -5006,6 +4935,33 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (updateNavBar)  {
             mNavigationController.updateNavbarOverlay(getNavbarThemedResources());
         }
+    }
+
+    private void DontStressOnRecreate() {
+        recreateStatusBar();
+        RemoveViews();
+
+    }   
+
+    private void RemoveViews() {
+        updateRowStates();
+        updateSpeedbump();
+        checkBarModes();
+        updateClearAll();
+        updateEmptyShadeView();
+        clearNotificationEffects();
+        updateDozingState();
+        updatePublicMode();
+        updateNotifications();
+        updateMediaMetaData(true);
+        resetQsPanelVisibility();
+        updateQsExpansionEnabled();
+        mShadeUpdates.check();
+        mQSPanel.refreshAllTiles();
+        mNotificationPanel.resetViews();
+        updateNotificationShadeForChildren();
+        mTmpChildOrderMap.clear();
+
     }
 
     /**
@@ -6000,6 +5956,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWakeUpTouchLocation = null;
         mStackScroller.setAnimationsEnabled(false);
         mStatusBarWindowManager.setHeadsUpShowing(false);
+        RemoveViews();
         updateVisibleToUser();
         if (mQSTileHost.isEditing()) {
             mQSTileHost.setEditing(false);
@@ -6022,6 +5979,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mDeviceInteractive = true;
         mStackScroller.setAnimationsEnabled(true);
         mNotificationPanel.setTouchDisabled(false);
+        RemoveViews();
         updateVisibleToUser();
     }
 

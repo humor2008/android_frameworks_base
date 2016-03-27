@@ -87,8 +87,10 @@ public class KeyguardStatusView extends GridLayout implements
 
         @Override
         public void onTimeChanged() {
-            mEnableRefresh = true;
+            if (mEnableRefresh) {
                 refresh();
+            }
+
         }
 
         @Override
@@ -110,7 +112,7 @@ public class KeyguardStatusView extends GridLayout implements
         @Override
         public void onFinishedGoingToSleep(int why) {
             setEnableMarquee(false);
-            mEnableRefresh = true;
+            mEnableRefresh = false;
         }
 
         @Override
@@ -383,7 +385,7 @@ public class KeyguardStatusView extends GridLayout implements
             mWeatherConditionText.setTextColor(mPrimaryTextColor);
         }
         if (mWeatherCurrentTemp != null) {
-            mWeatherCurrentTemp.setTextColor(secondaryTextColor);
+            mWeatherCurrentTemp.setTextColor(mPrimaryTextColor);
         }
 
 

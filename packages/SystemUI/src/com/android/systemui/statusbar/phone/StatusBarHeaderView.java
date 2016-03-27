@@ -68,8 +68,8 @@ import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.android.internal.util.cm.WeatherController;
-import com.android.internal.util.cm.WeatherControllerImpl;
+import com.android.systemui.statusbar.policy.WeatherController;
+import com.android.systemui.statusbar.policy.WeatherControllerImpl;
 import com.android.internal.logging.MetricsConstants;
 import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryLevelTextView;
@@ -549,14 +549,13 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void updateEverything() {
 	updateHeights();
-	updateVisibilities();
-	updateSystemIconsLayoutParams();
-	updateClickTargets();
-	updateMultiUserSwitch();
-	updateClockScale();
-	updateAvatarScale();
-	updateClockLp();
-	requestCaptureValues();
+        updateVisibilities();
+        updateSystemIconsLayoutParams();
+        updateMultiUserSwitch();
+        updateAvatarScale();
+        updateClockScale();
+        updateClockLp();
+        requestCaptureValues();
 	     	
     }
 
@@ -1676,13 +1675,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void setQSHeaderAlpha() {
-        if (mHeaderView != null) {
-            mHeaderView.getBackground().setAlpha(mQSHeaderAlpha);
-        }
-        if (mBackgroundImage != null) {
-            mBackgroundImage.setAlpha(mQSHeaderAlpha);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.QS_TRANSPARENT_HEADER, 255) != 255) {
+            if (mHeaderView != null) {
+                 mHeaderView.getBackground().setAlpha(mQSHeaderAlpha);
+            }
+            if (mBackgroundImage != null) {
+                mBackgroundImage.setAlpha(mQSHeaderAlpha);
+            }
         }
     }
+        
     private void setStatusBarDetailFontStyle(int font) {
         switch (font) {
             case FONT_NORMAL:

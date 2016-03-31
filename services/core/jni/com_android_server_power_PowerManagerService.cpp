@@ -119,8 +119,10 @@ static void nativeAcquireSuspendBlocker(JNIEnv *env, jclass /* clazz */, jstring
 
 static void nativeCpuBoost(JNIEnv *env, jobject clazz, jint duration) {
     // Tell the Power HAL to boost the CPU
+    int duration_param = duration;
+
     if (gPowerModule && gPowerModule->powerHint) {
-        gPowerModule->powerHint(gPowerModule, POWER_HINT_CPU_BOOST, (void *) duration);
+        gPowerModule->powerHint(gPowerModule, POWER_HINT_CPU_BOOST, &duration_param);
     }
 }
 

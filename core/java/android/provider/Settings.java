@@ -4272,12 +4272,6 @@ public final class Settings {
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
         /**
-         * Display second in the Clock
-         * @hide
-         */
-        public static final String CLOCK_USE_SECOND = "clock_use_second";
-        
-        /**
          * Swap volume buttons when the screen is rotated
          * @hide
          */

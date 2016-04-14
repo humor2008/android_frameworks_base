@@ -986,6 +986,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_39);
 		} else if ( mCustomlogoStyle == 40) {
 		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_40);
+		} else if ( mCustomlogoStyle == 41) {
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_41);
+		} else if ( mCustomlogoStyle == 42) {
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_42);
 		}
 
 		showmCustomlogo(mCustomlogo, mCustomlogoColor,  mCustomlogoStyle);
@@ -1890,6 +1894,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_39);
 		} else if ( mCustomlogoStyle == 40) {
 		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_40);
+		} else if ( mCustomlogoStyle == 41) {
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_41);
+		} else if ( mCustomlogoStyle == 42) {
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_42);
 		}
 		showmCustomlogo(mCustomlogo, mCustomlogoColor,  mCustomlogoStyle);
 
@@ -3126,6 +3134,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         overrideActivityPendingAppTransition(true /* keyguardShowing */);
     }
 
+    @Override
+    public void startAction(boolean dismissShade) {
+        startActionDismissingPanel(dismissShade);
+    }
+
     public void setQsExpanded(boolean expanded) {
         mStatusBarWindowManager.setQsExpanded(expanded);
         mKeyguardStatusView.setImportantForAccessibility(expanded
@@ -4240,6 +4253,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }, cancelAction, afterKeyguardGone);
     }
 
+    public void startActionDismissingPanel(final boolean dismissShade) {
+        final boolean keyguardShowing = mStatusBarKeyguardViewManager.isShowing();
+        if (keyguardShowing) return;
+            if (dismissShade) {
+                animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE, true /* force */);
+            }
+    }
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (DEBUG) Log.v(TAG, "onReceive: " + intent);
@@ -4474,6 +4495,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		} else if ( style == 36) {
 		mCLogo.setVisibility(View.GONE);
 		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_36);
+		} else if ( style == 37) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_37);
+		} else if ( style == 38) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_38);
+		} else if ( style == 39) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_39);
+		} else if ( style == 40) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_40);
+		} else if ( style == 41) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_41);
+		} else if ( style == 42) {
+		mCLogo.setVisibility(View.GONE);
+		mCLogo = (ImageView) mStatusBarView.findViewById(R.id.custom_42);
 		}
 		mCLogo.setVisibility(View.VISIBLE);
 
@@ -5619,6 +5658,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void onHintFinished() {
         // Delay the reset a bit so the user can read the text.
         mKeyguardIndicationController.hideTransientIndicationDelayed(HINT_RESET_DELAY_MS);
+        mKeyguardBottomArea.expand(false);
     }
 
     public void onCameraHintStarted(String hint) {
@@ -5818,14 +5858,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mDozeScrimController.onScreenTurnedOn();
         mVisualizerView.setVisible(true);
         if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
-            mLiveLockScreenController.getLiveLockScreenView().onScreenTurnedOn();
+            mLiveLockScreenController.onScreenTurnedOn();
         }
     }
 
     public void onScreenTurnedOff() {
         mVisualizerView.setVisible(false);
         if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
-            mLiveLockScreenController.getLiveLockScreenView().onScreenTurnedOff();
+            mLiveLockScreenController.onScreenTurnedOff();
         }
     }
 

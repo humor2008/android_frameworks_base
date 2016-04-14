@@ -3825,7 +3825,6 @@ public final class Settings {
          */
         public static final String TOAST_ANIMATION = "toast_animation";
 
-
    	/**
   	* volume answer.
          * @hide
@@ -4056,14 +4055,6 @@ public final class Settings {
          * @hide
          */
         public static final String HIDE_PANEL_ICONS = "hide_panel_icons";
-
-
-	/**
-         * Hide Settings icon in Panel
-         * @hide
-         */
-        public static final String HIDE_SETTINGS_ICON = "hide_settings_icon";
-
 
 	/**
          * Hide user icon in Panel
@@ -4484,11 +4475,6 @@ public final class Settings {
          */
         public static final String STATUSBAR_CLOCK_FONT_SIZE = "statusbar_clock_font_size";
 	
-	/**
-         * Display second in the Clock
-         * @hide
-         */
-        public static final String CLOCK_USE_SECOND = "clock_use_second";
 
         /**
          * Shows custom date before clock time
@@ -4515,18 +4501,10 @@ public final class Settings {
         public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
 
          /**
-         * Switch for clock color
-         * @hide
-         */
-        public static final String STATUSBAR_CLOCKCOLOR_SWITCH = "statusbar_clockcolor_switch";
-
-         /**
          * Setting for clock color
          * @hide
          */
         public static final String STATUSBAR_CLOCK_COLOR = "statusbar_clock_color";
-
-
 
 	/**
          * Show four g instead of lte
@@ -4693,6 +4671,14 @@ public final class Settings {
         public static final String QS_USE_FOUR_COLUMNS = "qs_use_four_columns";
 
 	/**
+         * Wether to show a headsup enable/disable button in status bar header
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_SHOW_STATUS_BUTTON = "heads_up_show_status_button";
+
+        /**
+         * IME Animations
          *
          * @hide
          */
@@ -5331,6 +5317,12 @@ public final class Settings {
          * @hide
          */
         public static final String HEADS_UP_SNOOZE_LENGTH_MS = "heads_up_snooze_length_ms";
+
+        /**
+         * Force heads up in all applications
+         * @hide
+         */
+        public static final String HEADS_UP_FORCE_ALL = "heads_up_force_all";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

@@ -1719,8 +1719,8 @@ package android {
     field public static final int toggle = 16908311; // 0x1020017
     field public static final int undo = 16908338; // 0x1020032
     field public static final int widget_frame = 16908312; // 0x1020018
-    field public static final int monitor_box = 16908374; // 0x01020071
-    field public static final int seek_bar = 16908375; // 0x01020072
+    field public static final int monitor_box = 16908401; // 0x01020071
+    field public static final int seek_bar = 16908402; // 0x01020072
   }
 
   public static final class R.integer {
@@ -10872,6 +10872,7 @@ package android.gesture {
     field public static final int GESTURE_STROKE_TYPE_SINGLE = 0; // 0x0
     field public static final int ORIENTATION_HORIZONTAL = 0; // 0x0
     field public static final int ORIENTATION_VERTICAL = 1; // 0x1
+    field protected boolean mClearPerformedGesture;
   }
 
   public static abstract interface GestureOverlayView.OnGestureListener {
@@ -24087,6 +24088,23 @@ package android.preference {
     method public void setShowSilent(boolean);
   }
 
+  public class SlimSeekBarPreference extends android.preference.Preference implements android.widget.SeekBar.OnSeekBarChangeListener {
+    ctor public SlimSeekBarPreference(android.content.Context, android.util.AttributeSet);
+    method public void disablePercentageValue(boolean);
+    method public void disableText(boolean);
+    method public void isMilliseconds(boolean);
+    method public void minimumValue(int);
+    method public void multiplyValue(int);
+    method public void onProgressChanged(android.widget.SeekBar, int, boolean);
+    method public void onStartTrackingTouch(android.widget.SeekBar);
+    method public void onStopTrackingTouch(android.widget.SeekBar);
+    method public void setDefault(int);
+    method public void setInitValue(int);
+    method public void setInterval(int);
+    field public int interval;
+    field public static int maximum;
+  }
+
   public class SwitchPreference extends android.preference.TwoStatePreference {
     ctor public SwitchPreference(android.content.Context, android.util.AttributeSet, int, int);
     ctor public SwitchPreference(android.content.Context, android.util.AttributeSet, int);
@@ -26668,6 +26686,7 @@ package android.provider {
     field public static final java.lang.String BLUETOOTH_DISCOVERABILITY_TIMEOUT = "bluetooth_discoverability_timeout";
     field public static final deprecated java.lang.String BLUETOOTH_ON = "bluetooth_on";
     field public static final android.net.Uri CONTENT_URI;
+    field public static final java.lang.String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
     field public static final deprecated java.lang.String DATA_ROAMING = "data_roaming";
     field public static final java.lang.String DATE_FORMAT = "date_format";
     field public static final deprecated java.lang.String DEBUG_APP = "debug_app";
@@ -26681,6 +26700,7 @@ package android.provider {
     field public static final java.lang.String END_BUTTON_BEHAVIOR = "end_button_behavior";
     field public static final java.lang.String FONT_SCALE = "font_scale";
     field public static final java.lang.String HAPTIC_FEEDBACK_ENABLED = "haptic_feedback_enabled";
+    field public static final java.lang.String HIDE_LOCKSCREEN_DATE = "hide_lockscreen_date";
     field public static final deprecated java.lang.String HTTP_PROXY = "http_proxy";
     field public static final deprecated java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
     field public static final deprecated java.lang.String LOCATION_PROVIDERS_ALLOWED = "location_providers_allowed";
@@ -26693,6 +26713,7 @@ package android.provider {
     field public static final java.lang.String MUTE_STREAMS_AFFECTED = "mute_streams_affected";
     field public static final deprecated java.lang.String NETWORK_PREFERENCE = "network_preference";
     field public static final deprecated java.lang.String NEXT_ALARM_FORMATTED = "next_alarm_formatted";
+    field public static final java.lang.String NFC_POLLING_MODE = "nfc_polling";
     field public static final java.lang.String NOTIFICATION_SOUND = "notification_sound";
     field public static final deprecated java.lang.String PARENTAL_CONTROL_ENABLED = "parental_control_enabled";
     field public static final deprecated java.lang.String PARENTAL_CONTROL_LAST_UPDATE = "parental_control_last_update";
@@ -26714,6 +26735,7 @@ package android.provider {
     field public static final deprecated java.lang.String SHOW_PROCESSES = "show_processes";
     field public static final deprecated java.lang.String SHOW_WEB_SUGGESTIONS = "show_web_suggestions";
     field public static final java.lang.String SOUND_EFFECTS_ENABLED = "sound_effects_enabled";
+    field public static final java.lang.String STATUS_BAR_CARRIER_FONT_SIZE = "status_bar_carrier_font_size";
     field public static final deprecated java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
     field public static final java.lang.String TEXT_AUTO_CAPS = "auto_caps";

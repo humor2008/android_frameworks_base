@@ -4388,6 +4388,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCK_CLOCK_FONTS = "lock_clock_fonts";
+        
+        /**
+         * Change fonts for the system lockscreen date
+         *
+         * @hide
+         */
+        public static final String LOCK_DATE_FONTS = "lock_date_fonts";
 
 	/**
          * Settings for clock font style
@@ -5017,6 +5024,12 @@ public final class Settings {
          * @hide
          */
         public static final String KEYGUARD_TOGGLE_TORCH = "keyguard_toggle_torch";
+        
+        /**
+         * whether to enable /disable showing charging current on lockscreen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_SHOW_CURRENT = "lock_screen_show_current";
 
 
 	/**

@@ -23,42 +23,14 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.WindowManager.LayoutParams.*;
 
+import android.app.SearchManager;
+import android.os.UserHandle;
+
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.ActivityManagerNative;
-import android.app.SearchManager;
-import android.os.Build;
-import android.os.UserHandle;
 
-import android.view.ActionMode;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.IRotationWatcher.Stub;
-import android.view.IWindowManager;
-import android.view.InputDevice;
-import android.view.InputEvent;
-import android.view.InputQueue;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.SearchEvent;
-import android.view.SurfaceHolder.Callback2;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.view.ViewParent;
-import android.view.ViewRootImpl;
-import android.view.ViewStub;
-import android.view.ViewTreeObserver.OnPreDrawListener;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowManager;
 import com.android.internal.R;
-import com.android.internal.view.FloatingActionMode;
 import com.android.internal.view.RootViewSurfaceTaker;
 import com.android.internal.view.StandaloneActionMode;
 import com.android.internal.view.menu.ContextMenuBuilder;
@@ -71,9 +43,9 @@ import com.android.internal.view.menu.MenuView;
 import com.android.internal.widget.ActionBarContextView;
 import com.android.internal.widget.BackgroundFallback;
 import com.android.internal.widget.DecorContentParent;
-import com.android.internal.widget.FloatingToolbar;
 import com.android.internal.widget.SwipeDismissLayout;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.ComponentName;
@@ -98,6 +70,7 @@ import android.media.AudioManager;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionLegacyHelper;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -119,8 +92,37 @@ import android.util.EventLog;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
+
+import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.IRotationWatcher.Stub;
+import android.view.IWindowManager;
+import android.view.InputDevice;
+import android.view.InputEvent;
+import android.view.InputQueue;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.SearchEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewManager;
+import android.view.ViewParent;
+import android.view.ViewRootImpl;
+import android.view.ViewStub;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
@@ -132,12 +134,16 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.ViewTreeObserver.OnPreDrawListener;
+import android.view.SurfaceHolder.Callback2;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.R;
+import com.android.internal.view.FloatingActionMode;
+import com.android.internal.widget.FloatingToolbar;
 
 /**
  * Android-specific Window.
@@ -194,6 +200,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private LayoutInflater mLayoutInflater;
 
     private TextView mTitleView;
+    private Context mContext;
 
     private DecorContentParent mDecorContentParent;
     private ActionMenuPresenterCallback mActionMenuPresenterCallback;
@@ -268,7 +275,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private boolean mAlwaysReadCloseOnTouchAttr = false;
     private boolean mEnableGestures;
 
-    private Context mContext;
     private ContextMenuBuilder mContextMenu;
     private MenuDialogHelper mContextMenuHelper;
     private boolean mClosingActionMenu;

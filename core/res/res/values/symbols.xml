@@ -1431,6 +1431,8 @@
   <java-symbol type="style" name="Theme.DeviceDefault.Dialog.NoFrame" />
   <java-symbol type="style" name="Theme.IconMenu" />
   <java-symbol type="style" name="Theme.DeviceDefault.VoiceInteractionSession" />
+  <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindow" />
+  <java-symbol type="style" name="Theme.DeviceDefault.FloatingWindowLight" />
 
   <java-symbol type="attr" name="mediaRouteButtonStyle" />
   <java-symbol type="attr" name="externalRouteEnabledDrawable" />
@@ -2393,6 +2395,11 @@
   <java-symbol type="string" name="global_action_screenshot" />
   <java-symbol type="drawable" name="ic_lock_settings" />
   <java-symbol type="drawable" name="ic_lock_user" />
+
+  <!-- EdgeGesture service -->
+  <java-symbol type="dimen" name="edge_gesture_trigger_distance" />
+  <java-symbol type="dimen" name="edge_gesture_perpendicular_distance" />
+  <java-symbol type="dimen" name="edge_gesture_trigger_thickness" />
 
   <!-- Developer settings - Kill app back press -->
   <java-symbol type="string" name="app_killed_message" />

@@ -1340,7 +1340,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             transition(mQsDetailHeader, showingDetail);
             mShowingDetail = showingDetail;
             if (showingDetail) {
-                mQsDetailHeaderTitle.setText(detail.getTitle());
+                mQsDetailHeaderTitle.setText(QSTile.getDetailAdapterTitle(getContext(), detail));
                 final Boolean toggleState = detail.getToggleState();
                 if (toggleState == null) {
                     mQsDetailHeaderSwitch.setVisibility(INVISIBLE);
@@ -1477,7 +1477,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
             mShowBatteryTextExpanded = showExpandedBatteryPercentage;
             mShowWeather = CMSettings.System.getInt(
-                    resolver, CMSettings.System.STATUS_BAR_SHOW_WEATHER, 1) == 1;
+                    resolver, CMSettings.System.STATUS_BAR_SHOW_WEATHER, 0) == 1;
 
             mQSHeaderAlpha = Settings.System.getInt(
                     resolver, Settings.System.QS_TRANSPARENT_HEADER, 255);

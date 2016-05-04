@@ -4163,6 +4163,59 @@ public final class Settings {
          * @hide
          */
         public static final String HEADER_WEATHERTWO_COLOR = "header_weather2_color";
+        
+        
+        /**
+         * Dashboard custom colors switch
+         * @hide
+         */
+        public static final String DASHBOARD_CUSTOM_COLORS = "db_custom_colors";
+
+	/**
+         * Dashboard icon colors
+         * @hide
+         */
+        public static final String DB_ICON_COLOR = "db_icon_color";
+
+	/**
+         * Dashboard text color
+         * @hide
+         */
+        public static final String DB_TEXT_COLOR = "db_text_color";
+        
+        
+        /**
+         * Dashboard category text color
+         * @hide
+         */
+        public static final String SETTINGS_CATEGORY_TEXT_COLOR = "settings_category_text_color";
+        
+        
+         /**
+         * Dashboard color
+         * @hide
+         */
+        public static final String SETTINGS_BG_COLOR = "settings_bg_color";
+        
+        
+        /**
+         * Dashboard title text size
+         * @hide
+         */
+        public static final String SETTINGS_TITLE_TEXT_SIZE = "settings_title_text_size";
+
+        /**
+         * Dashboard category text size
+         * @hide
+         */
+        public static final String SETTINGS_CATEGORY_TEXT_SIZE = "settings_category_text_size";
+        
+        
+        /**
+         * Settings Dash Font Style
+         * @hide
+         */
+        public static final String DASHBOARD_FONT_STYLE = "dashboard_font_style";
 
 
 
@@ -5614,6 +5667,25 @@ public final class Settings {
          * @hide
          */
         public static final String PA_PIE_ALWAYS_RIGHT = "pa_pie_always_right";
+
+        /**
+         * Hide carrier label based on number of notification icons
+         * @hide
+         */
+        public static final String HIDE_CARRIER_MAX_SWITCH = "hide_carrier_max_switch";
+
+        /**
+         * Hide the carrier label on the status bar depending on the amount of notifications
+         *
+         * 1 notification icon (always)
+         * 2 notification icons
+         * 3 notification icons
+         * 4 notification icons
+         * 5 notification icons
+         * 6 notification icons
+         * @hide
+         */
+        public static final String HIDE_CARRIER_MAX_NOTIFICATION = "hide_carrier_max_notification";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -8711,7 +8783,7 @@ public final class Settings {
          * {@hide}
          */
         public static final String AIRPLANE_MODE_TOGGLEABLE_RADIOS = "airplane_mode_toggleable_radios";
-
+        
         /**
          * A Long representing a bitmap of profiles that should be disabled when bluetooth starts.
          * See {@link android.bluetooth.BluetoothProfile}.
@@ -8729,7 +8801,7 @@ public final class Settings {
          *   "00:11:22,0;01:02:03:04,2"
          * @hide
          */
-       public static final String BLUETOOTH_INTEROPERABILITY_LIST = "bluetooth_interoperability_list";
+        public static final String BLUETOOTH_INTEROPERABILITY_LIST = "bluetooth_interoperability_list";
 
         /**
          * The policy for deciding when Wi-Fi should go to sleep (which will in

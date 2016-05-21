@@ -284,12 +284,13 @@ public class NotificationPanelView extends PanelView implements
     private SwipeLockedDirection mLockedDirection;
 
     private SwipeHelper mSwipeHelper;
-    public boolean mShowingExternalKeyguard;
     private final int mMinimumFlingVelocity;
     private final int mScreenHeight;
     private LiveLockScreenController mLiveLockscreenController;
     private final GestureDetector mGestureDetector;
     private ViewLinker mViewLinker;
+    private final UnlockMethodCache mUnlockMethodCache;
+
 
     private enum SwipeLockedDirection {
         UNKNOWN,
@@ -316,7 +317,6 @@ public class NotificationPanelView extends PanelView implements
 
         @Override
         public void onChildDismissed(View v) {
-            mShowingExternalKeyguard = true;
             mCanDismissKeyguard = false;
             mStatusBar.focusKeyguardExternalView();
             mLiveLockscreenController.onLiveLockScreenFocusChanged(true /* hasFocus */);
@@ -386,9 +386,7 @@ public class NotificationPanelView extends PanelView implements
                     return false;
                 }
                 mCanDismissKeyguard = true;
-                mShowingExternalKeyguard = false;
                 mStatusBar.showBouncer();
-                mStatusBar.unfocusKeyguardExternalView();
                 return true;
             }
 
@@ -423,6 +421,7 @@ public class NotificationPanelView extends PanelView implements
         Point point = new Point();
         display.getSize(point);
         mScreenHeight = point.y;
+        mUnlockMethodCache = UnlockMethodCache.getInstance(context);
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -478,7 +477,7 @@ public class NotificationPanelView extends PanelView implements
             @Override
             public boolean onInterceptTouchEvent(MotionEvent e) {
                 boolean intercept = false;
-                if (mShowingExternalKeyguard) {
+                if (mLiveLockscreenController.getLiveLockScreenHasFocus()) {
                     // Handles swipe up to fade/dismiss when showing
                     // live lock screen
                     intercept = mAfforanceHelper.onInterceptTouchEvent(e);
@@ -503,9 +502,12 @@ public class NotificationPanelView extends PanelView implements
                 }
 
                 boolean intercept = false;
-                if (mShowingExternalKeyguard) {
+                if (mLiveLockscreenController.getLiveLockScreenHasFocus()) {
                     intercept = mAfforanceHelper.onTouchEvent(e);
-                    if (isCancelOrUp) {
+                    // If the touch did not originate on the affordance helper,
+                    // we must collapse the panel here since we can't rely on
+                    // the swipe callbacks from being invoked.
+                    if (isCancelOrUp && !isAffordanceSwipeInProgress()) {
                         mKeyguardBottomArea.expand(false);
                     }
                     if (!intercept) {
@@ -535,10 +537,7 @@ public class NotificationPanelView extends PanelView implements
             }
         });
         setQSBackgroundAlpha();
-	mQsColorSwitch = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0,
-                UserHandle.USER_CURRENT) == 1;
-            setQSBackgroundColor();
+        setQSBackgroundColor();
             
        mLockPatternUtils = new CmLockPatternUtils(getContext());
     }
@@ -860,7 +859,8 @@ public class NotificationPanelView extends PanelView implements
             return true;
         }
 
-        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia()) {
+        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia() ||
+                (mUnlockMethodCache.isTrustManaged() && mAfforanceHelper.isOnLockIcon(event))) {
             return super.onInterceptTouchEvent(event);
         }
 
@@ -1043,7 +1043,8 @@ public class NotificationPanelView extends PanelView implements
         }
         if ((!mIsExpanding || mHintAnimationRunning)
                 && !mQsExpanded
-                && (mStatusBar.getBarState() != StatusBarState.SHADE || mShowingExternalKeyguard)) {
+                && (mStatusBar.getBarState() != StatusBarState.SHADE
+                || mLiveLockscreenController.getLiveLockScreenHasFocus())) {
             mAfforanceHelper.onTouchEvent(event);
         }
         if (mOnlyAffordanceInThisMotion) {
@@ -1058,7 +1059,8 @@ public class NotificationPanelView extends PanelView implements
             updateVerticalPanelPosition(event.getX());
         }
 
-        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia()) {
+        if (isKeyguardInteractiveAndShowing() || mStatusBar.isKeyguardShowingMedia() ||
+                (mUnlockMethodCache.isTrustManaged() && mAfforanceHelper.isOnLockIcon(event))) {
             super.onTouchEvent(event);
             return true;
         }
@@ -1084,7 +1086,8 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private boolean isKeyguardInteractiveAndShowing() {
-        return mShowingExternalKeyguard || mStatusBar.getBarState() != StatusBarState.KEYGUARD ||
+        return mLiveLockscreenController.getLiveLockScreenHasFocus() ||
+                mStatusBar.getBarState() != StatusBarState.KEYGUARD ||
                 !mLiveLockscreenController.isLiveLockScreenInteractive();
     }
 
@@ -1958,10 +1961,6 @@ public class NotificationPanelView extends PanelView implements
         updateNotificationTranslucency();
         updatePanelExpanded();
         mNotificationStackScroller.setShadeExpanded(!isFullyCollapsed());
-        if (mShowingExternalKeyguard && expandedHeight >= getMaxPanelHeight()) {
-            mStatusBar.unfocusKeyguardExternalView();
-            mShowingExternalKeyguard = false;
-        }
         if (DEBUG) {
             invalidate();
         }
@@ -2166,7 +2165,7 @@ public class NotificationPanelView extends PanelView implements
 
     private void updateKeyguardBottomAreaAlpha() {
         float alpha = Math.min(getKeyguardContentsAlpha(), 1 - getQsExpansionFraction());
-        if (mShowingExternalKeyguard) {
+        if (mLiveLockscreenController.getLiveLockScreenHasFocus()) {
             alpha = 1f;
         }
         mKeyguardBottomArea.setAlpha(alpha);
@@ -2447,6 +2446,7 @@ public class NotificationPanelView extends PanelView implements
             return;
         }
         mHintAnimationRunning = true;
+        mKeyguardBottomArea.expand(true);
         mAfforanceHelper.startHintAnimation(rightIcon, new Runnable() {
             @Override
             public void run() {
@@ -2627,9 +2627,7 @@ public class NotificationPanelView extends PanelView implements
 
         // Hide "No notifications" in QS.
         mNotificationStackScroller.updateEmptyShadeView(mShadeEmpty && !mQsExpanded);
-        if (mStatusBarState == StatusBarState.KEYGUARD
-                && (!mQsExpanded || mQsExpandImmediate || mIsExpanding
-                && mQsExpandedWhenExpandingStarted)) {
+        if (mStatusBarState == StatusBarState.KEYGUARD) {
             positionClockAndNotifications();
         }
     }
@@ -2840,12 +2838,6 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.QS_SMART_PULLDOWN),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QS_BACKGROUND_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENT_SHADE),
                     false, this, UserHandle.USER_ALL);
             update();
@@ -2864,26 +2856,6 @@ public class NotificationPanelView extends PanelView implements
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 	   ContentResolver resolver = mContext.getContentResolver();
-
-	  if (uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_HEADER_TEXT_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_HEADER_COLOR))) {
-                    setQSBackgroundColor();
-                } else if (uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_ICON_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_TEXT_COLOR))) {
-                    setQSColors();
-                }  else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.QS_COLOR_SWITCH))) {
-                setQSBackgroundColor();
-		setQSColors();
-		} else if (uri.equals(Settings.System.getUriFor(
-                        Settings.System.QS_BACKGROUND_COLOR))) {
-		    setQSBackgroundColor();
-                    setQSColors();
-                } 
 		update();
         }
 
@@ -2898,13 +2870,6 @@ public class NotificationPanelView extends PanelView implements
                     UserHandle.USER_CURRENT) == 1;
             mDoubleTapToSleepAnywhere = Settings.System.getIntForUser(resolver,
                     Settings.System.DOUBLE_TAP_SLEEP_ANYWHERE, 0, UserHandle.USER_CURRENT) == 1;
-        mQsColorSwitch = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0,
-                UserHandle.USER_CURRENT) == 1;
-            int mQSBackgroundColor = Settings.System.getInt(
-                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
-                setQSBackgroundColor();
-                setQSColors();
 
             boolean liveLockScreenEnabled = CMSettings.Secure.getInt(
                     resolver, CMSettings.Secure.LIVE_LOCK_SCREEN_ENABLED, 0) == 1;
@@ -2939,6 +2904,8 @@ public class NotificationPanelView extends PanelView implements
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_POWER_DOUBLE_TAP;
         } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_WIGGLE) {
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_WIGGLE;
+        } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE) {
+            mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE;
         } else {
             // Default.
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE;
@@ -2947,7 +2914,8 @@ public class NotificationPanelView extends PanelView implements
         // If we are launching it when we are occluded already we don't want it to animate,
         // nor setting these flags, since the occluded state doesn't change anymore, hence it's
         // never reset.
-        if (!isFullyCollapsed()) {
+        if (!isFullyCollapsed() && mLastCameraLaunchSource ==
+                KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE) {
             mLaunchingAffordance = true;
             setLaunchingAffordance(true);
         } else {

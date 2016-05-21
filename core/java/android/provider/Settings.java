@@ -3932,9 +3932,7 @@ public final class Settings {
          */
         public static final String TOAST_ICON = "toast_icon";
 
-
-
-	/**
+        /**
          * Whether to mute annoying notifications
          * @hide
          */
@@ -4052,36 +4050,6 @@ public final class Settings {
          * @hide
          */
         public static final String NETWORK_TRAFFIC_HIDEARROW = "network_traffic_hidearrow";
-        
-        /**
-         * Custom Pulse Widths
-         * @hide
-         */
-        public static final String PULSE_CUSTOM_DIMEN = "pulse_custom_dimen";
-                        
-        /**
-         * Custom Spacing Between Pulse Bars
-         * @hide
-         */
-        public static final String PULSE_CUSTOM_DIV = "pulse_custom_div";
-        
-        /**
-         * Size of Filled bars
-         * @hide
-         */
-        public static final String PULSE_FILLED_BLOCK_SIZE = "pulse_filled_block_size";
-        
-         /**
-         * Size of Empty Spaces Between Horizontal Visualizer Bars
-         * @hide
-         */
-        public static final String PULSE_EMPTY_BLOCK_SIZE = "pulse_empty_block_size";
-        
-         /**
-         * Pulse Fudge Factor
-         * @hide
-         */
-        public static final String PULSE_CUSTOM_FUDGE_FACTOR = "pulse_custom_fudge_factor";
         
 	/**
          * Hide lockscreen date
@@ -4364,7 +4332,13 @@ public final class Settings {
          */
         public static final String STATUS_BAR_CARRIER_COLOR = "status_bar_carrier_color";
 
-	/**
+        /**
+         * Custom carrier label font style
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_FONT_STYLE = "status_bar_carrier_font_style";
+        
+        /**
          * Settings for carrier label font size
          * @hide
          */
@@ -8506,6 +8480,37 @@ public final class Settings {
          * @hide
          */
         public static final String FLING_LONGSWIPE_THRESHOLD_DOWN_LAND = "fling_longswipe_threshold_down_land";
+                       
+        /**
+         * Custom Pulse Widths
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_DIMEN = "pulse_custom_dimen";
+                        
+        /**
+         * Custom Spacing Between Pulse Bars
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_DIV = "pulse_custom_div";
+        
+        /**
+         * Size of Filled bars
+         * @hide
+         */
+        public static final String PULSE_FILLED_BLOCK_SIZE = "pulse_filled_block_size";
+        
+         /**
+         * Size of Empty Spaces Between Horizontal Visualizer Bars
+         * @hide
+         */
+        public static final String PULSE_EMPTY_BLOCK_SIZE = "pulse_empty_block_size";
+        
+         /**
+         * Pulse Fudge Factor
+         * @hide
+         */
+        public static final String PULSE_CUSTOM_FUDGE_FACTOR = "pulse_custom_fudge_factor";
+        
 
         /**
          * This are the settings to be backed up.

@@ -62,6 +62,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.android.systemui.cm.UserContentObserver;
+import com.android.systemui.qs.tiles.LockscreenToggleTile;
+import com.android.systemui.statusbar.StatusBarState;
 import cyanogenmod.app.Profile;
 import cyanogenmod.app.ProfileManager;
 
@@ -1292,9 +1294,19 @@ public class KeyguardViewMediator extends SystemUI {
     public void showKeyguard() {
         // This is to prevent left edge from interfering
         // with affordances.
-        if (mStatusBar.isAffordanceSwipeInProgress()) {
+        if (mStatusBar.isAffordanceSwipeInProgress()
+                || mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
             return;
         }
+
+        // Disable edge detector once we're back on lockscreen
+        try {
+            WindowManagerGlobal.getWindowManagerService()
+                    .setLiveLockscreenEdgeDetector(false);
+        } catch (RemoteException e){
+            Log.e(TAG, e.getMessage());
+        }
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {

@@ -823,6 +823,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		}  else if (uri.equals(Settings.System.getUriFor(
 		Settings.System.BATTERY_ICON_COLOR))) {
 		updatebatterycolor(); 
+		DontStressOnRecreate();
 		} else if (uri.equals(Settings.System.getUriFor(
 		Settings.System.BATTERY_TEXT_COLOR))) {
 		updatebatterycolor(); 
@@ -1550,9 +1551,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         Resources res = context.getResources();
 
-        mScreenWidth = (float) context.getResources().getDisplayMetrics().widthPixels;
-        mMinBrightness = context.getResources().getInteger(
-                com.android.internal.R.integer.config_screenBrightnessDim);
+        mScreenWidth = (float) res.getDisplayMetrics().widthPixels;
+        mMinBrightness = res.getInteger(com.android.internal.R.integer.config_screenBrightnessDim);
 
         updateDisplaySize(); // populates mDisplayMetrics
         updateResources(null);
@@ -3022,8 +3022,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
     
     public void updatebatterycolor() {
-    int mBatteryIconColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.BATTERY_ICON_COLOR, 0xFFFFFFFF);
       if (mIconController != null) {
      mIconController.applyIconTint(); 
      }
@@ -3729,7 +3727,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 setInteracting(StatusBarManager.WINDOW_STATUS_BAR, true);
             }
         }
-        if (mBrightnessChanged && upOrCancel) {
+        if (mBrightnessChanged && upOrCancel && !isQsExpanded()) {
             mBrightnessChanged = false;
             if (mJustPeeked && mExpandedVisible) {
                 mNotificationPanel.fling(10, false);
@@ -4680,6 +4678,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mKeyguardWallpaper = wm.getKeyguardBitmap();
         updateMediaMetaData(true);
+    }
+
+    public void hideHeadsUp() {
+        if (mUseHeadsUp && mHeadsUpManager != null) {
+            mHeadsUpManager.releaseAllImmediately();
+        }
     }
 
     private void setControllerUsers() {

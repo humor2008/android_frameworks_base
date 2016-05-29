@@ -513,7 +513,7 @@
 
 		<activity
 			android:name=".nature"
-			android:label="Nature" >
+			android:label="Nature - Time based" >
 			<intent-filter>
 				<action android:name="org.omnirom.DaylightHeaderPack1" />
 
@@ -523,7 +523,7 @@
 
 		<activity
 			android:name=".poly"
-			android:label="Poly" >
+			android:label="Poly - Time based" >
 			<intent-filter>
 				<action android:name="org.omnirom.DaylightHeaderPack1" />
 
@@ -532,7 +532,7 @@
 		</activity>
 		<activity
 			android:name=".naturerandom"
-			android:label="Nature (random)" >
+			android:label="Nature - Random" >
 			<intent-filter>
 				<action android:name="org.omnirom.DaylightHeaderPack1" />
 
@@ -569,6 +569,168 @@
 		 <activity
 			android:name=".n2"
 			android:label="Dots" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".color_layer_header_base"
+			android:label="Colors texture - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".colorz"
+			android:label="Pixels full" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture2"
+			android:label="Pixels full v2" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".getr1"
+			android:label="Get resurrected" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".getr1_p"
+			android:label="Get resurrected paper" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".paper1"
+			android:label="Paper" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".magic"
+			android:label="Magic" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".camo"
+			android:label="Camouflage" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".NT"
+			android:label="Color with texture - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture"
+			android:label="Texture - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture1"
+			android:label="Texture1 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture3"
+			android:label="Texture3 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture4"
+			android:label="Texture4 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture5"
+			android:label="Texture5 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture6"
+			android:label="Texture6 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".texture7"
+			android:label="Texture7 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".lines"
+			android:label="Texture8 - Smart" >
+			<intent-filter>
+				<action android:name="org.omnirom.DaylightHeaderPack1" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		 <activity
+			android:name=".dots_smart"
+			android:label="Texture9 - Smart" >
 			<intent-filter>
 				<action android:name="org.omnirom.DaylightHeaderPack1" />
 

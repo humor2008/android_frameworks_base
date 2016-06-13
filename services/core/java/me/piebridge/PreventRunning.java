@@ -32,7 +32,6 @@ public class PreventRunning implements PreventRunningHook {
             "/data/app/me.piebridge.forcestopgb-1.apk",
             "/data/app/me.piebridge.forcestopgb-2.apk",
             "/data/app/me.piebridge.forcestopgb-3.apk",
-            "/system/app/ForceStop/ForceStop.apk",
     };
 
     public PreventRunning() {

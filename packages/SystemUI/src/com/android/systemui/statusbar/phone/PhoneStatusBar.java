@@ -5336,6 +5336,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             e.printStackTrace();
         }
         if (mLiveLockScreenController.isShowingLiveLockScreenView()) {
+            mLiveLockScreenController.onLiveLockScreenFocusChanged(false);
             mLiveLockScreenController.getLiveLockScreenView().onKeyguardShowing(
                     mStatusBarKeyguardViewManager.isScreenTurnedOn());
         }
@@ -5506,6 +5507,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     boolean isSecure() {
         return mStatusBarKeyguardViewManager != null && mStatusBarKeyguardViewManager.isSecure();
+    }
+
+    public boolean isKeyguardInputRestricted() {
+        return mStatusBarKeyguardViewManager != null && mStatusBarKeyguardViewManager.isInputRestricted();
     }
 
     public long calculateGoingToFullShadeDelay() {

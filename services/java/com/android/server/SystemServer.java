@@ -100,6 +100,9 @@ import cyanogenmod.providers.CMSettings;
 import dalvik.system.VMRuntime;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -456,8 +459,8 @@ public final class SystemServer {
         boolean disableNetwork = SystemProperties.getBoolean("config.disable_network", false);
         boolean disableNetworkTime = SystemProperties.getBoolean("config.disable_networktime", false);
         boolean isEmulator = SystemProperties.get("ro.kernel.qemu").equals("1");
-        String[] externalServices = context.getResources().getStringArray(
-                org.cyanogenmod.platform.internal.R.array.config_externalCMServices);
+        String externalServer = context.getResources().getString(
+                org.cyanogenmod.platform.internal.R.string.config_externalSystemServer);
 
         try {
             Slog.i(TAG, "Reading configuration...");
@@ -1060,13 +1063,22 @@ public final class SystemServer {
         // MMS service broker
         mmsService = mSystemServiceManager.startService(MmsServiceBroker.class);
 
-        for (String service : externalServices) {
-            try {
-                Slog.i(TAG, service);
-                mSystemServiceManager.startService(service);
-            } catch (Throwable e) {
-                reportWtf("starting " + service , e);
-            }
+        final Class<?> serverClazz;
+        try {
+            serverClazz = Class.forName(externalServer);
+            final Constructor<?> constructor = serverClazz.getDeclaredConstructor(Context.class);
+            constructor.setAccessible(true);
+            final Object baseObject = constructor.newInstance(mSystemContext);
+            final Method method = baseObject.getClass().getDeclaredMethod("run");
+            method.setAccessible(true);
+            method.invoke(baseObject);
+        } catch (ClassNotFoundException
+                | IllegalAccessException
+                | InvocationTargetException
+                | InstantiationException
+                | NoSuchMethodException e) {
+            Slog.wtf(TAG, "Unable to start  " + externalServer);
+            Slog.wtf(TAG, e);
         }
 
         // It is now time to start up the app processes...
@@ -1193,15 +1205,6 @@ public final class SystemServer {
                 Slog.i(TAG, "WebViewFactory preparation");
                 WebViewFactory.prepareWebViewInSystemServer();
 
-                // Start Nfc before SystemUi to ensure NfcTile and other apps gets a
-                // valid NfcAdapter from NfcManager
-                try {
-                    startNfcService(context);
-                } catch (Throwable e) {
-                    // Don't crash. Nfc is an optional service. Just annotate that isn't ready
-                    Slog.e(TAG, "Nfc service didn't start. Nfc will not be available.", e);
-                }
-
                 try {
                     startSystemUi(context);
                 } catch (Throwable e) {
@@ -1319,24 +1322,5 @@ public final class SystemServer {
                     "com.android.systemui.SystemUIService"));
         //Slog.d(TAG, "Starting service: " + intent);
         context.startServiceAsUser(intent, UserHandle.OWNER);
-    }
-
-    static final void startNfcService(Context context) {
-        IPackageManager pm = ActivityThread.getPackageManager();
-        if (pm == null) {
-            Slog.w(TAG, "Cannot get package manager, assuming no NFC feature");
-            return;
-        }
-        try {
-            if (pm.hasSystemFeature(PackageManager.FEATURE_NFC)) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.nfc",
-                            "com.android.nfc.NfcBootstrapService"));
-                context.startServiceAsUser(intent, UserHandle.OWNER);
-            }
-        } catch (RemoteException e) {
-            Slog.w(TAG, "Package manager query failed, assuming no NFC feature", e);
-            return;
-        }
     }
 }

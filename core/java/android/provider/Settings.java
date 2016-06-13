@@ -5007,6 +5007,27 @@ public final class Settings {
          */
         public static final String RECENTS_MAX_APPS = "recents_max_apps";
 
+	/**
+         * Change quick settings tiles animation style
+         *
+         * @hide
+         */
+        public static final String ANIM_TILE_STYLE = "anim_tile_style";
+
+        /**
+         * Change quick settings tiles animation duration
+         *
+         * @hide
+         */
+        public static final String ANIM_TILE_DURATION = "anim_tile_duration";
+
+        /**
+         * Change quick settings tiles interpolator
+         *
+         * @hide
+         */
+        public static final String ANIM_TILE_INTERPOLATOR = "anim_tile_interpolator";
+
         /**
          * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
          * @hide
@@ -5720,6 +5741,12 @@ public final class Settings {
          * @hide
          */
         public static final String HIDE_CARRIER_MAX_NOTIFICATION = "hide_carrier_max_notification";
+
+        /**
+         * Whether to show the battery fully charged notification
+         * @hide
+         */
+        public static final String BATTERY_FULLY_CHARGED_NOTIFICATION = "battery_fully_charged_notification";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

@@ -19,6 +19,7 @@ package com.android.systemui.qs;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -33,6 +34,14 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -459,6 +468,57 @@ public class QSPanel extends ViewGroup {
         r.tileView.onStateChanged(state);
     }
 
+    private void setAnimationTile(TileRecord r) {
+        ObjectAnimator animTile = null;
+        int animStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ANIM_TILE_STYLE, 0, UserHandle.USER_CURRENT);
+        int animDuration = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ANIM_TILE_DURATION, 1500, UserHandle.USER_CURRENT);
+        int interpolatorType = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ANIM_TILE_INTERPOLATOR, 0, UserHandle.USER_CURRENT);
+        if (animStyle == 0) {
+            //No animation
+        }
+        if (animStyle == 1) {
+            animTile = ObjectAnimator.ofFloat(r.tileView, "rotationY", 0f, 360f);
+        }
+        if (animStyle == 2) {
+            animTile = ObjectAnimator.ofFloat(r.tileView, "rotation", 0f, 360f);
+        }
+        if (animTile != null) {
+            switch (interpolatorType) {
+                    case 0:
+                        animTile.setInterpolator(new LinearInterpolator());
+                        break;
+                    case 1:
+                        animTile.setInterpolator(new AccelerateInterpolator());
+                        break;
+                    case 2:
+                        animTile.setInterpolator(new DecelerateInterpolator());
+                        break;
+                    case 3:
+                        animTile.setInterpolator(new AccelerateDecelerateInterpolator());
+                        break;
+                    case 4:
+                        animTile.setInterpolator(new BounceInterpolator());
+                        break;
+                    case 5:
+                        animTile.setInterpolator(new OvershootInterpolator());
+                        break;
+                    case 6:
+                        animTile.setInterpolator(new AnticipateInterpolator());
+                        break;
+                    case 7:
+                        animTile.setInterpolator(new AnticipateOvershootInterpolator());
+                        break;
+                    default:
+                        break;
+            }
+            animTile.setDuration(animDuration);
+            animTile.start();
+        }
+    }
+
     private void addTile(final QSTile<?> tile) {
         final TileRecord r = new TileRecord();
         r.tile = tile;
@@ -500,6 +560,7 @@ public class QSPanel extends ViewGroup {
             @Override
             public void onClick(View v) {
                 r.tile.click();
+                setAnimationTile(r);
                 vibrateTile(20);
             }
         };
@@ -507,6 +568,7 @@ public class QSPanel extends ViewGroup {
             @Override
             public void onClick(View v) {
                 r.tile.secondaryClick();
+                setAnimationTile(r);
                 vibrateTile(20);
             }
         };
@@ -514,6 +576,7 @@ public class QSPanel extends ViewGroup {
             @Override
             public boolean onLongClick(View v) {
                 r.tile.longClick();
+                setAnimationTile(r);
                 vibrateTile(20);
                 return true;
             }

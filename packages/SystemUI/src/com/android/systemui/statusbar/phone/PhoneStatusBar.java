@@ -769,6 +769,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
 		    Settings.System.QS_STROKE), false, this,
 		    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+		    Settings.System.STATUSBAR_CLOCK_COLOR_SWITCH), false, this,
+		    UserHandle.USER_ALL);
             update();
         }
 
@@ -898,6 +901,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (mQSStroke == 0) {
                     DontStressOnRecreate();
                     }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_CLOCK_COLOR_SWITCH))) {
+                    int mClockColorSwitch = Settings.System.getIntForUser(
+                            mContext.getContentResolver(),
+                            Settings.System.STATUSBAR_CLOCK_COLOR_SWITCH, 0,
+                            UserHandle.USER_CURRENT);
+                   DontStressOnRecreate();
             }
          update();
 	}
@@ -4527,7 +4537,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             rrLogo.setVisibility(View.GONE);
             return;
         }
-        rrLogo.setColorFilter(color, Mode.SRC_IN);
+	if (color != 0xFFFFFFFF) {
+       	    rrLogo.setColorFilter(color, Mode.SRC_IN);
+	} else {
+             rrLogo.clearColorFilter();
+        }
         if (style == 0) {
             rrLogo.setVisibility(View.GONE);
  	    rrLogo = (ImageView) mStatusBarView.findViewById(R.id.left_rr_logo);
@@ -4552,7 +4566,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mCLogo.setVisibility(View.GONE);
             return;
         }
-
 		mCLogo.setColorFilter(color, Mode.MULTIPLY);
 		if ( style == 0) {
 		mCLogo.setVisibility(View.GONE);

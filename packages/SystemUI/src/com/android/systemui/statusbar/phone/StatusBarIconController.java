@@ -89,6 +89,9 @@ public class StatusBarIconController implements Tunable {
     private BatteryMeterView mBatteryMeterView;
     private ClockController mClockController;
     private View mCenterClockLayout;
+    private TextView mCarrier;
+    private TextView mWeather;
+    private TextView mWeatherLeft;
 
     private int mIconSize;
     private int mIconHPadding;
@@ -134,6 +137,10 @@ public class StatusBarIconController implements Tunable {
 
     private TextView mCarrierLabel;
     private int mCarrierLabelMode;
+    private ImageView mRRLogo;
+    private ImageView mRRLogoRight;
+    private ImageView mRRLogoCenter;
+    private ImageView mRRLogoBefore;
 
     private final ArraySet<String> mIconBlacklist = new ArraySet<>();
 
@@ -168,16 +175,18 @@ public class StatusBarIconController implements Tunable {
                 android.R.interpolator.fast_out_slow_in);
         mDarkModeIconColorSingleTone = context.getColor(R.color.dark_mode_icon_color_single_tone);
         mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
-
+	mRRLogo = (ImageView) statusBar.findViewById(R.id.left_rr_logo);
+	mRRLogoRight = (ImageView) statusBar.findViewById(R.id.rr_logo);
+	mRRLogoCenter = (ImageView) statusBar.findViewById(R.id.center_rr_logo);
+	mRRLogoBefore = (ImageView) statusBar.findViewById(R.id.before_icons_rr_logo);
         mCarrierLabel = (TextView) statusBar.findViewById(R.id.statusbar_carrier_text);
+        mWeather = (TextView) statusBar.findViewById(R.id.weather_temp);
+        mWeatherLeft = (TextView) statusBar.findViewById(R.id.left_weather_temp);
         mHandler = new Handler();
-
         mClockController = new ClockController(statusBar, mNotificationIcons, mHandler);
         mCenterClockLayout = statusBar.findViewById(R.id.center_clock_layout);
-
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
         settingsObserver.observe();
-
         updateResources();
         carrierLabelVisibility();
 
@@ -537,7 +546,7 @@ public class StatusBarIconController implements Tunable {
 
     public void applyIconTint() {
 	mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;	
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
 	int batterytext = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.BATTERY_TEXT_COLOR, 0xFFFFFFFF);
         int mBatteryIconColor = Settings.System.getInt(mContext.getContentResolver(),
@@ -561,9 +570,44 @@ public class StatusBarIconController implements Tunable {
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
 	mBatteryLevelTextView.setTextColor(mIconTint);
         }
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUSBAR_CLOCK_COLOR_SWITCH, 0,
+                UserHandle.USER_CURRENT) == 0) {
+            mClockController.setTextColor(mIconTint);
+        }
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
-        //mClockController.setTextColor(mIconTint);
-        applyNotificationIconsTint();	
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_COLOR,
+                mContext.getResources().getColor(R.color.status_bar_clock_color),
+                UserHandle.USER_CURRENT) == mContext.getResources().
+                getColor(R.color.status_bar_clock_color)) {
+	if (mCarrierLabel !=null) {
+            mCarrierLabel.setTextColor(mIconTint);
+	    }
+        }
+	if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_RR_LOGO_COLOR, 0xFFFFFFFF,
+                UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
+		if (mRRLogo != null) {
+       		 mRRLogo.setImageTintList(ColorStateList.valueOf(mIconTint));
+		} if (mRRLogoCenter != null) {
+        	mRRLogoCenter.setImageTintList(ColorStateList.valueOf(mIconTint));
+		} if (mRRLogoRight != null) {
+       		 mRRLogoRight.setImageTintList(ColorStateList.valueOf(mIconTint));
+		} if (mRRLogoBefore != null) {
+       		 mRRLogoBefore.setImageTintList(ColorStateList.valueOf(mIconTint));
+		}
+	}
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF,
+                UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
+		if (mWeather !=null) {
+         	   mWeather.setTextColor(mIconTint);
+		} if (mWeatherLeft !=null) {
+       	     	   mWeatherLeft.setTextColor(mIconTint);
+       	        }
+	}
+        applyNotificationIconsTint();
     }
 
     private void applyNotificationIconsTint() {

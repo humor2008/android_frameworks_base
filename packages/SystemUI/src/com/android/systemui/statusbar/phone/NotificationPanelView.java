@@ -58,6 +58,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.view.animation.PathInterpolator;
@@ -75,7 +76,6 @@ import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.qs.QSContainer;
-import com.android.systemui.qs.QSDetailClipper;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.ExpandableView;
@@ -241,7 +241,6 @@ public class NotificationPanelView extends PanelView implements
     private boolean mHeadsUpAnimatingAway;
     private boolean mLaunchingAffordance;
     private String mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE;
-    private QSDetailClipper mClipper;
 
     private Runnable mHeadsUpExistenceChangedRunnable = new Runnable() {
         @Override
@@ -282,7 +281,7 @@ public class NotificationPanelView extends PanelView implements
     private int mCustomDashWidth;
     private int mCustomDashGap;
 
-    // AICP panel logo
+    // RR panel logo
     private ImageView mRRPanelLogo;
     private int mQSPanelLogo;
     private int mQSPanelLogoColor;
@@ -459,7 +458,6 @@ public class NotificationPanelView extends PanelView implements
         mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mRRPanelLogo = (ImageView) findViewById(R.id.rr_panel_logo);
         mTaskManagerPanel = (LinearLayout) findViewById(R.id.task_manager_panel);
-        mClipper = new QSDetailClipper(mTaskManagerPanel);
         mClockView = (TextView) findViewById(R.id.clock_view);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
         mScrollView.setFocusable(false);
@@ -556,9 +554,8 @@ public class NotificationPanelView extends PanelView implements
         setQSPanelLogo();
         setQSStroke();
         setQSBackgroundAlpha();
-        setQSBackgroundColor();
-            
-       mLockPatternUtils = new CmLockPatternUtils(getContext());
+        setQSBackgroundColor();   
+        mLockPatternUtils = new CmLockPatternUtils(getContext());
     }
 
     public boolean isAffordanceSwipeInProgress() {
@@ -1892,28 +1889,50 @@ public class NotificationPanelView extends PanelView implements
     }
 
     public void setTaskManagerVisibility(boolean taskManagerShowing) {
-        if (mShowTaskManager && !mKeyguardShowing) {
+        if (mShowTaskManager) {
             mTaskManagerShowing = taskManagerShowing;
             cancelAnimation();
-            int x = mQsPanel.getLeft() + mQsPanel.getWidth() / 2;
-            int y = mQsPanel.getTop() / 2;
-            if (!taskManagerShowing) {
-                mQsPanel.setVisibility(View.VISIBLE);
+            boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
+            mQsPanel.setVisibility(expandVisually && !taskManagerShowing
+                    ? View.VISIBLE : View.GONE);
+            mTaskManagerPanel.setVisibility(expandVisually && taskManagerShowing
+                    && !mKeyguardShowing ? View.VISIBLE : View.GONE);
+            if (mTaskManagerShowing) {
+                mTaskManagerPanel.startAnimation(getAnimation(true));
+                mQsPanel.startAnimation(getAnimation(false));
+            } else {
+                mQsPanel.startAnimation(getAnimation(true));
+                mTaskManagerPanel.startAnimation(getAnimation(false));
             }
-            mClipper.animateCircularClip(x, y, taskManagerShowing, mHideQsPanelWhenDone);
+            updateQsState();
         }
     }
 
-   private final AnimatorListenerAdapter mHideQsPanelWhenDone = new AnimatorListenerAdapter() {
-        public void onAnimationEnd(Animator animation) {
-            if (mTaskManagerShowing) {
-			mTaskManagerPanel.setVisibility(View.VISIBLE);
-			mQsPanel.setVisibility(View.GONE);
-            }
-        };
-    };
+    private Animation getAnimation(boolean isIn) {
+        ContentResolver resolver = mContext.getContentResolver();
+        int animationResId = 0;
+        final int style = Settings.System.getInt(resolver,
+                Settings.System.QS_TASK_ANIMATION, 0);
+ 
+        if (style == 0) {
+            animationResId = isIn ? R.anim.push_down_in : R.anim.push_down_out;
+        } else if (style == 1) {
+            animationResId = isIn ? R.anim.last_app_in : R.anim.last_app_out;
+        } else if (style == 2) {
+            animationResId = isIn ? R.anim.push_left_in : R.anim.push_right_out;
+        } else if (style == 3) {
+            animationResId = isIn ? R.anim.push_right_in : R.anim.push_left_out;
+        } else if (style == 4) {
+            animationResId = isIn ? R.anim.rotate : R.anim.push_down_out;
+        } else if (style == 5) {
+            animationResId = isIn ? R.anim.turn_in : R.anim.turn_out;
+        } else if (style == 6) {
+            animationResId = isIn ? R.anim.push_up_in : R.anim.push_up_out;
+        }
+        return AnimationUtils.loadAnimation(mContext, animationResId);
+    }
 
-    private void cancelAnimation() {
+  private void cancelAnimation() {
         if (mQsExpansionAnimator != null) {
             mQsExpansionAnimator.cancel();
         }

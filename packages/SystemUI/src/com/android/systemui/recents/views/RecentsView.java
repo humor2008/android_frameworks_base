@@ -38,6 +38,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IRemoteCallback;
@@ -78,6 +79,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
+
 
 import com.android.systemui.EventLogTags;
 
@@ -129,6 +131,7 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
     public boolean mClearStyleSwitch = false;
     private int mfabcolor ;
     private ImageButton button;
+    private TextView mClearallText;
     private boolean mButtonsRotation;
     private boolean mClearallRotation;
     private boolean ClearallTasks;
@@ -581,18 +584,18 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
 
     public void checkstyle(int style) {
 	final ContentResolver resolver = mContext.getContentResolver();
+        final Resources res = getContext().getResources();
 	mButtonsRotation =  Settings.System.getInt(mContext.getContentResolver(),
 				 Settings.System.RECENTS_ROTATE_FAB, 0) == 1;	
 	mClearStyle = Settings.System.getIntForUser(
                     resolver, Settings.System.CLEAR_RECENTS_STYLE, 0,
-                    UserHandle.USER_CURRENT);	
-        final Resources res = getContext().getResources();
+                    UserHandle.USER_CURRENT);
         mClearStyleSwitch  = Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.CLEAR_RECENTS_STYLE_ENABLE, 0) == 1;	
+				 Settings.System.CLEAR_RECENTS_STYLE_ENABLE, 0) == 1;
 	mfabcolor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.FAB_BUTTON_COLOR, 0xffDC4C3C);	
+                Settings.System.FAB_BUTTON_COLOR, 0xffDC4C3C);
 	int mbarcolor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.MEM_BAR_COLOR, 0xff009688);	
+                Settings.System.MEM_BAR_COLOR, 0xff009688);
 	int mtextcolor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.MEM_TEXT_COLOR, 0xFFFFFFFF);
 	int mclearallcolor = Settings.System.getInt(mContext.getContentResolver(),
@@ -601,8 +604,6 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
                 Settings.System.RECENTS_CLOCK_COLOR, 0xFFFFFFFF);
 	int mDatecolor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.RECENTS_DATE_COLOR, 0xFFFFFFFF);
-        ClearallTasks =   Settings.System.getInt(mContext.getContentResolver(),
-		     Settings.System.RECENTS_CLEAR_ALL_DISMISS_ALL, 1) == 1;	
 	int mDefaultcolor = res.getColor(R.color.recents_membar_text_color);
 	int mSetfabcolor = res.getColor(R.color.fab_color);
 
@@ -613,18 +614,21 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
 	mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);
 	mClock = (TextClock) ((View)getParent()).findViewById(R.id.recents_clock);
         mDate = (TextView) ((View)getParent()).findViewById(R.id.recents_date);
-	mFloatingButton.getBackground().setColorFilter(mSetfabcolor, Mode.CLEAR); 
-	mFloatingButton.getBackground().setColorFilter(mfabcolor, Mode.SRC_IN); 
+	mFloatingButton.getBackground().setColorFilter(mSetfabcolor, Mode.CLEAR);
+	if(mClearStyle!=30) {
+	mFloatingButton.getBackground().setColorFilter(mfabcolor, Mode.SRC_IN);
+	}
 	MemoryInfo memInfo = new MemoryInfo();
         mAm.getMemoryInfo(memInfo);
 	updateMemoryStatus();
 	mMemBar.getProgressDrawable().setColorFilter(mbarcolor, Mode.MULTIPLY); 
 	mMemText.setTextColor(mtextcolor);
 	if (mClock !=null) {
-	mClock.setTextColor(mClockcolor); }
+	mClock.setTextColor(mClockcolor);
+	}
         if(mDate !=null) {
-	mDate.setTextColor(mDatecolor); }
-	
+	mDate.setTextColor(mDatecolor);
+	}
 	if (style == 0) {
 	mClearRecents.setVisibility(View.GONE);	
 	mClearRecents = ((View)getParent()).findViewById(R.id.clear_recents);
@@ -826,7 +830,17 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
 	button = (ImageButton) ((View)getParent()).findViewById(R.id.clear_recents28);      
 	button.setColorFilter(mclearallcolor, Mode.SRC_IN);
 	mClearRecents.setVisibility(View.VISIBLE);
-	} 
+	}
+	if (style == 29) {
+	int zero = 0x00000000;
+	mClearRecents.setVisibility(View.GONE);
+	mClearRecents = ((View)getParent()).findViewById(R.id.clear_recents29);
+	mClearallText =  (TextView) ((View)getParent()).findViewById(R.id.clear_recents29);
+	mClearallText.setTextColor(mclearallcolor);
+	mClearallText.setVisibility(View.VISIBLE);
+	mClearRecents.setVisibility(View.VISIBLE);
+	mFloatingButton.getBackground().setColorFilter(zero,Mode.SRC_IN);
+	}
 	mClearRecents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                if (mButtonsRotation) {
@@ -840,9 +854,9 @@ public  class RecentsView extends FrameLayout implements TaskStackView.TaskStack
             }
         });		
 	} else {
-	mClearRecents.setVisibility(View.GONE);	
+	mClearRecents.setVisibility(View.GONE);
 	mClearRecents = ((View)getParent()).findViewById(R.id.clear_recents);
-	mClearRecents.setVisibility(View.VISIBLE); 
+	mClearRecents.setVisibility(View.VISIBLE);
 	mFloatingButton = ((View)getParent()).findViewById(R.id.floating_action_button);
 	mMemBar = (ProgressBar) ((View)getParent()).findViewById(R.id.recents_memory_bar);
 	mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);

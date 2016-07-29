@@ -27,6 +27,7 @@ import android.app.ActivityManager;
 import android.app.StatusBarManager;
 import android.content.res.Resources;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -45,6 +46,7 @@ import android.os.PowerManager;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.MathUtils;
 import android.view.Display;
@@ -118,6 +120,15 @@ public class NotificationPanelView extends PanelView implements
     private static final Rect mDummyDirtyRect = new Rect(0, 0, 1, 1);
 
     private static final long SLIDE_PANEL_IN_ANIMATION_DURATION = 300;
+
+    private static final String KEY_USER_EXPANDED_NOTIFICATIONS_IN_KEYGUARD =
+            "user_expanded_notifications_in_keyguard";
+    private static final String KEY_USER_INTERACTED_WITH_LLS =
+            "user_interacted_with_lls";
+    private static final String KEY_USER_UNLOCKED =
+            "user_unlocked";
+    private static final String KEY_USER_RETURNED_FROM_LLS =
+            "user_returned_from_lls";
 
     public static final long DOZE_ANIMATION_DURATION = 700;
     private CmLockPatternUtils mLockPatternUtils;
@@ -307,6 +318,12 @@ public class NotificationPanelView extends PanelView implements
     private final UnlockMethodCache mUnlockMethodCache;
 
 
+    // Keep track of common user interactions on the lock screen
+    private boolean mUserUnlocked;
+    private boolean mUserExpandedNotifications;
+    private boolean mUserInteractedWithLiveLockScreen;
+    private boolean mUserReturnedFromLiveLockScreen;
+
     private enum SwipeLockedDirection {
         UNKNOWN,
         HORIZONTAL,
@@ -335,6 +352,13 @@ public class NotificationPanelView extends PanelView implements
             mCanDismissKeyguard = false;
             mStatusBar.focusKeyguardExternalView();
             mLiveLockscreenController.onLiveLockScreenFocusChanged(true /* hasFocus */);
+            if (!mUserInteractedWithLiveLockScreen) {
+                mUserInteractedWithLiveLockScreen = true;
+                saveUserInteractedWithLls(true);
+            }
+            if (!mUserReturnedFromLiveLockScreen) {
+                startShowNotificationsHintAnimation();
+            }
             resetAlphaTranslation();
             // Enables the left edge gesture to allow user
             // to return to keyguard
@@ -437,6 +461,11 @@ public class NotificationPanelView extends PanelView implements
         display.getSize(point);
         mScreenHeight = point.y;
         mUnlockMethodCache = UnlockMethodCache.getInstance(context);
+
+        mUserUnlocked = getUserUnlocked();
+        mUserExpandedNotifications = getUserExpandedNotificationsInKeyguard();
+        mUserInteractedWithLiveLockScreen = getUserInteractedWithLls();
+        mUserReturnedFromLiveLockScreen = getUserReturnedFromLls();
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -1396,8 +1425,13 @@ public class NotificationPanelView extends PanelView implements
             mCanDismissKeyguard = true;
         }
 
-        if (goingToFullShade || (oldState == StatusBarState.KEYGUARD
-                && statusBarState == StatusBarState.SHADE_LOCKED)) {
+        boolean keyguardToShadeLocked = oldState == StatusBarState.KEYGUARD
+                && statusBarState == StatusBarState.SHADE_LOCKED;
+        if (goingToFullShade || keyguardToShadeLocked) {
+            if (keyguardToShadeLocked && !mUserExpandedNotifications) {
+                mUserExpandedNotifications = true;
+                saveUserExpandedNotificationsInKeyguard(true);
+            }
             animateKeyguardStatusBarOut();
             animateHeaderSlidingIn();
         } else if (oldState == StatusBarState.SHADE_LOCKED
@@ -1411,6 +1445,11 @@ public class NotificationPanelView extends PanelView implements
                 mKeyguardBottomArea.updateLeftAffordance();
                 mAfforanceHelper.updatePreviews();
             }
+        }
+        if (oldState != StatusBarState.SHADE && statusBarState == StatusBarState.SHADE &&
+                !mUserUnlocked) {
+            mUserUnlocked = true;
+            saveUserUnlocked(true);
         }
         if (statusBarState == StatusBarState.KEYGUARD ||
                 statusBarState == StatusBarState.SHADE_LOCKED) {
@@ -1897,12 +1936,14 @@ public class NotificationPanelView extends PanelView implements
                     ? View.VISIBLE : View.GONE);
             mTaskManagerPanel.setVisibility(expandVisually && taskManagerShowing
                     && !mKeyguardShowing ? View.VISIBLE : View.GONE);
-            if (mTaskManagerShowing) {
-                mTaskManagerPanel.startAnimation(getAnimation(true));
-                mQsPanel.startAnimation(getAnimation(false));
-            } else {
-                mQsPanel.startAnimation(getAnimation(true));
-                mTaskManagerPanel.startAnimation(getAnimation(false));
+	if(!mKeyguardShowing) {
+           	 if (mTaskManagerShowing) {
+               	 mTaskManagerPanel.startAnimation(getAnimation(true));
+               	 mQsPanel.startAnimation(getAnimation(false));
+            	 } else {
+                 mQsPanel.startAnimation(getAnimation(true));
+                 mTaskManagerPanel.startAnimation(getAnimation(false));
+            	 }
             }
             updateQsState();
         }
@@ -1912,8 +1953,7 @@ public class NotificationPanelView extends PanelView implements
         ContentResolver resolver = mContext.getContentResolver();
         int animationResId = 0;
         final int style = Settings.System.getInt(resolver,
-                Settings.System.QS_TASK_ANIMATION, 0);
- 
+                Settings.System.QS_TASK_ANIMATION, 7);
         if (style == 0) {
             animationResId = isIn ? R.anim.push_down_in : R.anim.push_down_out;
         } else if (style == 1) {
@@ -1928,6 +1968,24 @@ public class NotificationPanelView extends PanelView implements
             animationResId = isIn ? R.anim.turn_in : R.anim.turn_out;
         } else if (style == 6) {
             animationResId = isIn ? R.anim.push_up_in : R.anim.push_up_out;
+        } else if (style == 7) {
+            animationResId = isIn ? R.anim.recent_enter : R.anim.recent_exit;
+        } else if (style == 8) {
+            animationResId = isIn ? R.anim.fade_in : R.anim.fade_out;
+        } else if (style == 9) {
+            animationResId = isIn ? R.anim.slide_out_left : R.anim.slide_out_right;
+        } else if (style == 10) {
+            animationResId = isIn ? R.anim.last_app_in : R.anim.last_app_out;
+        } else if (style == 11) {
+            animationResId = isIn ? R.anim.rotate : R.anim.rotate_around_center;
+        } else if (style == 12) {
+            animationResId = isIn ? R.anim.task_open_enter : R.anim.task_open_exit;
+        } else if (style == 13) {
+            animationResId = isIn ? R.anim.xylon_toast_enter : R.anim.xylon_toast_exit;
+        } else if (style == 14) {
+            animationResId = isIn ? R.anim.search_bar_enter : R.anim.search_bar_exit;
+        } else if (style == 15) {
+            animationResId = isIn ? R.anim.toko_toast_enter : R.anim.toko_toast_exit;
         }
         return AnimationUtils.loadAnimation(mContext, animationResId);
     }
@@ -2488,6 +2546,7 @@ public class NotificationPanelView extends PanelView implements
         }
         mHintAnimationRunning = true;
         mKeyguardBottomArea.expand(true);
+        mKeyguardBottomArea.getIndicationView().animate().cancel();
         mAfforanceHelper.startHintAnimation(rightIcon, new Runnable() {
             @Override
             public void run() {
@@ -2691,6 +2750,11 @@ public class NotificationPanelView extends PanelView implements
 
     public void onScreenTurningOn() {
         mKeyguardStatusView.refreshTime();
+        if (shouldShowScreenOnHints()) {
+            startScreenOnHintAnimation(mLiveLockscreenController.isLiveLockScreenInteractive() &&
+                            !mUserInteractedWithLiveLockScreen,
+                    !mUserUnlocked, !mUserExpandedNotifications);
+        }
     }
 
     @Override
@@ -3191,5 +3255,56 @@ public class NotificationPanelView extends PanelView implements
         animator.addUpdateListener(mSlideInAnimationListener);
         animator.addListener(mSlideInAnimationListener);
         animator.start();
+
+        if (!mUserReturnedFromLiveLockScreen) {
+            mUserReturnedFromLiveLockScreen = true;
+            saveUserReturnedFromLls(true);
+        }
+    }
+
+    private void saveBooleanSharedPreference(String key, boolean value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        prefs.edit().putBoolean(key, value).apply();
+    }
+
+    private boolean getSharedPreferenceBoolean(String key, boolean defValue) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        return prefs.getBoolean(key, defValue);
+    }
+
+    private void saveUserExpandedNotificationsInKeyguard(boolean expanded) {
+        saveBooleanSharedPreference(KEY_USER_EXPANDED_NOTIFICATIONS_IN_KEYGUARD, expanded);
+    }
+
+    private boolean getUserExpandedNotificationsInKeyguard() {
+        return getSharedPreferenceBoolean(KEY_USER_EXPANDED_NOTIFICATIONS_IN_KEYGUARD, false);
+    }
+
+    private void saveUserInteractedWithLls(boolean interacted) {
+        saveBooleanSharedPreference(KEY_USER_INTERACTED_WITH_LLS, interacted);
+    }
+
+    private boolean getUserInteractedWithLls() {
+        return getSharedPreferenceBoolean(KEY_USER_INTERACTED_WITH_LLS, false);
+    }
+
+    private void saveUserUnlocked(boolean unlocked) {
+        saveBooleanSharedPreference(KEY_USER_UNLOCKED, unlocked);
+    }
+
+    private boolean getUserUnlocked() {
+        return getSharedPreferenceBoolean(KEY_USER_UNLOCKED, false);
+    }
+
+    private void saveUserReturnedFromLls(boolean revealed) {
+        saveBooleanSharedPreference(KEY_USER_RETURNED_FROM_LLS, revealed);
+    }
+
+    private boolean getUserReturnedFromLls() {
+        return getSharedPreferenceBoolean(KEY_USER_RETURNED_FROM_LLS, false);
+    }
+
+    private boolean shouldShowScreenOnHints() {
+        return mStatusBar.isDeviceProvisioned() && mStatusBarState == StatusBarState.KEYGUARD;
     }
 }

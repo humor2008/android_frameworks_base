@@ -3110,6 +3110,36 @@ public final class Settings {
         public static final String ANIMATOR_DURATION_SCALE = Global.ANIMATOR_DURATION_SCALE;
 
         /**
+         * Determine custom scroll friction.
+         * @hide
+         */
+        public static final String CUSTOM_SCROLL_FRICTION = "custom_scroll_friction";
+
+        /**
+         * Determine custom fling velocity.
+         * @hide
+         */
+        public static final String CUSTOM_FLING_VELOCITY = "custom_fling_velocity";
+
+        /**
+         * Determine custom overscroll distance.
+         * @hide
+         */
+        public static final String CUSTOM_OVERSCROLL_DISTANCE = "custom_overscroll_distance";
+
+        /**
+         * Determine custom overfling distance.
+         * @hide
+         */
+        public static final String CUSTOM_OVERFLING_DISTANCE = "custom_overfling_distance";
+
+         /**
+         *
+         * @hide
+         */
+        public static final String ANIMATION_CONTROLS_NO_SCROLL = "animation_controls_no_scroll";
+
+        /**
          * Control the type of rotation which can be performed using the accelerometer
          * if ACCELEROMETER_ROTATION is enabled.
          * Value is a bitwise combination of
@@ -8509,6 +8539,13 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD = "status_bar_locked_on_secure_keyguard";
+
+        /**
+         * Whether the reboot submenu at the power menu should trigger actions with a
+         * single click or with a confirmation.
+         * @hide
+         */
+        public static final String ADVANCED_REBOOT_ONECLICK = "advanced_reboot_oneclick";
 
         /**
          * @hide

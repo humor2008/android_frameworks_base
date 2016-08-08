@@ -20,24 +20,43 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.app.StatusBarManager;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
+import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.content.Intent;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.AttributeSet;
+import android.widget.FrameLayout;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import com.android.systemui.statusbar.BlurUtils;
+import com.android.systemui.statusbar.DisplayUtils;
+import com.android.systemui.statusbar.phone.NotificationPanelView;
+import com.android.systemui.cm.UserContentObserver;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.Gravity;
+import android.os.Handler;
+import android.net.Uri;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewStub;
+import java.lang.reflect.Field;
 import android.widget.Toast;
+import java.util.HashMap;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Prefs;
@@ -57,6 +76,8 @@ import com.android.systemui.recents.views.SystemBarScrimViews;
 import com.android.systemui.recents.views.ViewAnimation;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import cyanogenmod.providers.CMSettings;
+import android.provider.Settings;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -79,6 +100,8 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     View mEmptyView;
     DebugOverlayView mDebugOverlay;
 
+    public static boolean mBlurredRecentAppsEnabled;
+
     // Resize task debug
     RecentsResizeTaskDialog mResizeTaskDebugDialog;
 
@@ -92,7 +115,6 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
 
     // Runnable to be executed after we paused ourselves
     Runnable mAfterPauseRunnable;
-
     static RecentsTaskLoadPlan plan;
     private ReferenceCountedTrigger mExitTrigger;
 
@@ -212,7 +234,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
     /** Updates the recents icon if there are tasks to clear */
     public void setRecentHints(boolean showClearRecents) {
 	    return;
-    }
+	}
 
     /** Updates the set of recent tasks */
     void updateRecentsTasks() {
@@ -421,6 +443,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED);
         registerReceiver(mSystemBroadcastReceiver, filter);
+
     }
 
     /** Inflates the debug overlay if debug mode is enabled. */

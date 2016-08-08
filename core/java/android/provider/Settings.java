@@ -3536,6 +3536,66 @@ public final class Settings {
         /** @hide */
         public static final Validator POINTER_SPEED_VALIDATOR =
                 new InclusiveFloatRangeValidator(-7, 7);
+   
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_ENABLED_PREFERENCE_KEY = "blurred_status_bar_expanded_enabled_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+        public static final String BLUR_SCALE_PREFERENCE_KEY = "blurred_expanded_panel_scale_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+        public static final String BLUR_RADIUS_PREFERENCE_KEY = "blurred_expanded_panel_radius_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+  
+        public static final String TRANSLUCENT_NOTIFICATIONS_PRECENTAGE_PREFERENCE_KEY = "translucent_notifications_percentage_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+
+        public static final String TRANSLUCENT_QUICK_SETTINGS_PRECENTAGE_PREFERENCE_KEY = "translucent_quick_settings_percentage_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+
+        public static final String TRANSLUCENT_HEADER_PRECENTAGE_PREFERENCE_KEY = "translucent_header_percentage_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+
+        public static final String TRANSLUCENT_HEADER_PREFERENCE_KEY = "translucent_header_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+   
+        public static final String TRANSLUCENT_QUICK_SETTINGS_PREFERENCE_KEY = "translucent_quick_settings_pref";
+
+        /**
+         * XOSP Blur personalization settings
+         * @hide
+         */
+   
+        public static final String TRANSLUCENT_NOTIFICATIONS_PREFERENCE_KEY = "translucent_notifications_pref";
 
         /**
          * Enable built in CAF task manager
@@ -3983,6 +4043,19 @@ public final class Settings {
          */
         public static final String TOAST_ICON = "toast_icon";
 
+
+        /**
+         * Color of toast message icon
+         * @hide
+         */
+        public static final String TOAST_ICON_COLOR = "toast_icon_color";
+
+        /**
+         * Color of toast message test
+         * @hide
+         */
+        public static final String TOAST_TEXT_COLOR = "toast_text_color";
+
         /**
          * Whether to mute annoying notifications
          * @hide
@@ -4322,10 +4395,31 @@ public final class Settings {
          */       
         public static final String STATUSBAR_BATTERY_BAR_CHARGING_COLOR = "statusbar_battery_bar_charging_color";
 
+
+
         /**
          * @hide
          */
-        public static final String STATUSBAR_BATTERY_BAR_BATTERY_LOW_COLOR = "statusbar_battery_bar_battery_low_color";
+        public static final String STATUSBAR_BATTERY_BAR_BATTERY_LOW_COLOR_WARNING =
+                "statusbar_battery_bar_battery_low_color_warning";
+
+        /**
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_HIGH_COLOR =
+                "statusbar_battery_bar_high_color";
+
+        /**
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_LOW_COLOR =
+                "statusbar_battery_bar_low_color";
+
+        /**
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_USE_GRADIENT_COLOR =
+                "statusbar_battery_bar_use_gradient_color";
 
         /**
          * @hide
@@ -5944,6 +6038,13 @@ public final class Settings {
         public static final String QS_TASK_ANIMATION = "qs_task_animation";
 
         /**
+         * Notifications alpha
+         *
+         * @hide
+         */
+        public static final String NOTIFICATION_ALPHA = "notification_alpha";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -7293,6 +7394,15 @@ public final class Settings {
         public static final String LOCK_SHOW_ERROR_PATH = "lock_pattern_show_error_path";
 
         /**
+         * Disable checking for running overlays during permission changes
+         * running OmniSwicth will trigger this and we want to give people
+         * possibility to make it easier on demand
+         *
+         * @hide
+         */
+        public static final String PACKAGE_INSTALL_OVERLAY_CHECK_DISABLED = "package_install_overlay_check_disabled";
+
+        /**
          * This preference allows the device to be locked given time after screen goes off,
          * subject to current DeviceAdmin policy limits.
          * @hide
@@ -8564,6 +8674,68 @@ public final class Settings {
         public static final String ADVANCED_REBOOT_ONECLICK = "advanced_reboot_oneclick";
 
         /**
+         * Enable Disable Halo In Extended Statusbar
+         * @hide
+         */
+        public static final String HALO_ENABLE = "halo_enable";
+
+
+        /**
+         * HALO, should default to 0 (no, do not show)
+         * @hide
+         */
+        public static final String HALO_ACTIVE = "halo_active";
+
+        /**
+         * HALO hide?, should default to 0 (no, do not hide)
+         * @hide
+         */
+        public static final String HALO_HIDE = "halo_hide";
+
+        /**
+         * HALO pause activities?, defaults to 0 (no, do not pause) on devices which isLargeRAM() == true
+         * otherwise it defaults to 1 (yes, do pause)
+         * @hide
+         */
+        public static final String HALO_PAUSE = "halo_pause";
+
+        /**
+         * HALO size fraction, default is 1.0f (normal)
+         * @hide
+         */
+        public static final String HALO_SIZE = "halo_size";
+
+        /**
+         * HALO message box?, should default to 1 (yes, show message box on incoming notification)
+         * @hide
+         */
+        public static final String HALO_MSGBOX = "halo_msgbox";
+
+        /**
+         * HALO notificatoin count?, should default to 4 (both)
+         * @hide
+         */
+        public static final String HALO_NOTIFY_COUNT = "halo_notify_count";
+
+        /**
+         * HALO message box animation?, should default to 2 (flip animation)
+         * @hide
+         */
+        public static final String HALO_MSGBOX_ANIMATION = "halo_msgbox_animation";
+
+        /**
+         * HALO unlock ping?, should default to 0 (no, do not ping on unlock)
+         * @hide
+         */
+        public static final String HALO_UNLOCK_PING = "halo_unlock_ping";
+
+        /**
+         * HALO color, default is 0xffbbbbbb (normal)
+         * @hide
+         */
+        public static final String HALO_COLOR = "halo_color";
+
+        /**
          * @hide
          */
         public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
@@ -8772,6 +8944,12 @@ public final class Settings {
          * @hide
          */
         public static final String LAVAMP_SOLID_SPEED = "lavamp_solid_speed";
+
+        /**
+         * Navbar buttons transparency
+         * @hide
+         */
+        public static final String NAVBAR_BUTTONS_ALPHA = "navbar_buttons_alpha";
 
         /**
          * This are the settings to be backed up.

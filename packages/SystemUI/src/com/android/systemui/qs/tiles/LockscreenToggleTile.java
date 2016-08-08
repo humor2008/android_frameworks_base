@@ -149,3 +149,4 @@ public class LockscreenToggleTile extends QSTile<QSTile.BooleanState>
                 enabled ? 1 : 0, UserHandle.USER_CURRENT);
     }
 }
+

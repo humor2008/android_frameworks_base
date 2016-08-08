@@ -48,4 +48,9 @@
   <string name="floating_window_snap_left">Anclar a la izquierda</string>
   <string name="floating_window_snap_right">Anclar a la derecha</string>
   <string name="floating_window_minimize">Minimizar</string>
+  <!-- ADB enabled, but not connected notification & custom tile title -->
+  <string name="adb_not_connected_notification_title">ADB inactivo</string>
+  <string name="adb_active_custom_tile_not_connected">inactivo</string>
+  <!-- Vendor mismatched fingerprint warning [CHAR LIMIT=NONE] -->
+  <string name="system_error_vendorprint">Su imagen del proveedor no coincide con el sistema. Por favor flashee la imagen <xliff:g id="string">%s</xliff:g> de su dispositivo</string>
 </resources>

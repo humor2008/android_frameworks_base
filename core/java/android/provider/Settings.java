@@ -6045,6 +6045,13 @@ public final class Settings {
         public static final String NOTIFICATION_ALPHA = "notification_alpha";
 
         /**
+         * Enable\Disable Bluetooth Battery bar
+         * @hide
+         */
+        public static final String BLUETOOTH_SHOW_BATTERY = "bluetooth_show_battery";
+
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -8950,6 +8957,12 @@ public final class Settings {
          * @hide
          */
         public static final String NAVBAR_BUTTONS_ALPHA = "navbar_buttons_alpha";
+
+        /**
+         * Launch notifications in floating mode
+         * @hide
+         */
+        public static final String HALO_FLOAT_NOTIFICATIONS = "halo_float_notifications";
 
         /**
          * This are the settings to be backed up.

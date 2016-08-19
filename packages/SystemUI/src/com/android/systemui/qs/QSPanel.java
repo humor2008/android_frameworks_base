@@ -93,7 +93,7 @@ public class QSPanel extends ViewGroup {
     private boolean mExpanded;
     private boolean mListening;
     private boolean mClosingDetail;
-    private boolean mQsColorSwitch = false;
+    private int  mQsColorSwitch;
     private int mQsIconColor;
     private int mLabelColor;
 
@@ -140,12 +140,12 @@ public class QSPanel extends ViewGroup {
         updateResources();
         updateResources();
         mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+                    Settings.System.QS_COLOR_SWITCH, 0);
 	mLabelColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_TEXT_COLOR, 0xFFFFFFFF);
 	mQsIconColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_ICON_COLOR, 0xFFFFFFFF);
-	 if (mQsColorSwitch) {
+	 if (mQsColorSwitch == 1 || mQsColorSwitch == 2) {
             mDetailDoneButton.setTextColor(mLabelColor);
             mDetailSettingsButton.setTextColor(mLabelColor);
         }
@@ -205,25 +205,27 @@ public class QSPanel extends ViewGroup {
     }
     
      public void updatecolors() {
+	refreshAllTiles();
 	ImageView brightnessIcon = (ImageView) findViewById(R.id.brightness_icon);
-	mQsColorSwitch = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0) == 1;
+        mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.QS_COLOR_SWITCH, 0);
 	int mIconColor = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.QS_BRIGHTNESS_ICON_COLOR, 0xFFFFFFFF);
         if(brightnessIcon!=null) {        
-		if (mQsColorSwitch) {	
+		if (mQsColorSwitch == 1 || mQsColorSwitch == 2) {	
 		brightnessIcon.setColorFilter(mIconColor, Mode.SRC_ATOP);
 		}
-	}	
+	}
+	mBrightnessController.setColors();	
      }
      
         
   public void setDetailBackgroundColor(int color) {
 	final Resources res = getContext().getResources();
 	int mStockBg = res.getColor(R.color.quick_settings_panel_background);
-        mQsColorSwitch = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.QS_COLOR_SWITCH, 0) == 1;
-        if (mQsColorSwitch) {
+        mQsColorSwitch = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.QS_COLOR_SWITCH, 0);
+         if (mQsColorSwitch == 1 || mQsColorSwitch == 2)  {
             if (mDetail != null) {
                     mDetail.getBackground().setColorFilter(
                             color, Mode.SRC_ATOP);
@@ -232,8 +234,8 @@ public class QSPanel extends ViewGroup {
 	if (mDetail != null) {
                     mDetail.getBackground().setColorFilter(
                            mStockBg, Mode.SRC_ATOP);
-                }
-	 }    
+              	  }
+	   } 
 	}
 	
   public void setQSShadeAlphaValue(int alpha) {

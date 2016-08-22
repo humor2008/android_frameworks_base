@@ -6263,6 +6263,12 @@ public final class Settings {
          */
         public static final String BLUETOOTH_SHOW_BATTERY = "bluetooth_show_battery";
 
+        /**
+         * Hide Zen icon in statusbar
+         * @hide
+         */
+        public static final String SHOW_ZEN_ICON = "show_zen_icon";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -8926,7 +8932,13 @@ public final class Settings {
         public static final String HALO_SIZE = "halo_size";
 
         /**
-         * HALO message box?, should default to 1 (yes, show message box on incoming notification)
+         * Whether to use one tap tile action to enable or disable data 
+         * @hide
+         */
+        public static final String QS_DATA_ADVANCED = "qs_data_advanced";
+
+        /**
+         * HALO message box?, should default to 1 (yes, show message box on incoming notification) [1/2]
          * @hide
          */
         public static final String HALO_MSGBOX = "halo_msgbox";
@@ -9183,6 +9195,12 @@ public final class Settings {
          * @hide
          */
         public static final String HALO_FLOAT_NOTIFICATIONS = "halo_float_notifications";
+
+	/**
+         * Components that the Themes qstile modifies
+         * @hide
+         */
+        public static final String THEMES_TILE_COMPONENTS = "themes_tile_components";
 
         /**
          * This are the settings to be backed up.
